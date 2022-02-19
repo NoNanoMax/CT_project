@@ -5,7 +5,7 @@
 
 */
 
-#include "raytracing/raytracing.h"
+#include "scene/scene.h"
 
 
 
