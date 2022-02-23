@@ -9,10 +9,9 @@
 #include "stdio.h"
 
 int main() {
-    Vec3 v(1.0, 1.0, 1.0), u(2., 2., 2.);
-    Ray r(v, v);
-    
-    Triangle t(v, u, v);
-    printf("%d\n", t.check_intersection(r));
+    Vec3 v(1, 1, 1), u(1, 2, 3);
+    Vec3 a = v - u;
+    double d = dot(v, u);
+    printf("(%lf, %lf, %lf)\n %f", a.x, a.y, a.z, d);
     return 0;
 }
