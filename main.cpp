@@ -7,11 +7,14 @@
 
 #include "render/render.h"
 #include "stdio.h"
+#include <vector>
 
 int main() {
-    Vec3 v(1, 1, 1), u(1, 2, 3);
-    Vec3 a = v - u;
-    double d = dot(v, u);
-    printf("(%lf, %lf, %lf)\n %f", a.x, a.y, a.z, d);
+    Vec3 v(0, 0, 0);
+    Sphere S(v, 1, 1);
+    std::vector<Triangle> t = S.get_body();
+    for (int i = 0; i < t.size(); i++) {
+        printf("(%f, %f, %f)\n", t[i].v1.x, t[i].v1.y, t[i].v1.z);
+    }
     return 0;
 }

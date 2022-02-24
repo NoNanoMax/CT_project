@@ -22,12 +22,25 @@ void Vec3::normalize() {
     z = z / a;
 }
 
+Vec3 Vec3::normalized() {
+    return Vec3 (x / abs(), y / abs(), z / abs());
+}
+
+
 Vec3 Vec3::operator+(Vec3 other) {
     return Vec3(x + other.x, y + other.y, z + other.z);
 }
 
 Vec3 Vec3::operator-(Vec3 other) {
     return Vec3(x - other.x, y - other.y, z - other.z);
+}
+
+Vec3 Vec3::operator*(double other) {
+    return Vec3(x * other, y * other, z * other);
+}
+
+Vec3 Vec3::operator/(double other) {
+    return Vec3(x / other, y / other, z / other);
 }
 
 double dot(Vec3 a, Vec3 b) {

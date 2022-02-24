@@ -12,8 +12,11 @@ public:
     Vec3(double x, double y, double z);
     double abs();
     void normalize();
+    Vec3 normalized();
     Vec3 operator+(Vec3 other);
     Vec3 operator-(Vec3 other);
+    Vec3 operator*(double other);
+    Vec3 operator/(double other);
 };
 
 double dot(Vec3 a, Vec3 b);
