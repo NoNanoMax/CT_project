@@ -11,7 +11,7 @@
 
 class Figure {
 public:
-	virtual bool check_intersection(Ray r) = 0; // { return true; }
+	virtual bool check_intersection(Ray r) = 0;
 };
 
 class Triangle : public Figure {
@@ -23,10 +23,10 @@ public:
 };
 
 
-class Sphere{
+class Sphere : public Figure {
     std::vector<Triangle> body;
 public:
-    Sphere(Vec3 center, double radius, unsigned int iterations);
+    Sphere(Vec3 center, double radius, unsigned iterations = 2);
     bool check_intersection(Ray r);
     std::vector<Triangle> get_body();
 };
