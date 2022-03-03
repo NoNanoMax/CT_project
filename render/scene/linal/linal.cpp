@@ -9,6 +9,12 @@
 #include "linal.h"
 #include "math.h"
 
+// Vec3 ---------------------------------------------
+
+Vec3::Vec3() {
+    x = 0, y = 0, z = 0;
+}
+
 Vec3::Vec3(double x, double y, double z): x(x), y(y), z(z) { };
 
 double Vec3::abs() {
@@ -54,8 +60,83 @@ Vec3 vec(Vec3 a, Vec3 b) {
     return Vec3(new_x, new_y, new_z);
 }
 
+// Ray ---------------------------------------------
+
 Ray::Ray(Vec3 from, Vec3 to): from(from), to(to) { };
 
+// Matr3 ---------------------------------------------
 
+Matr3::Matr3() {
+    for(short i = 0; i < 3; i++) {
+        for(short j = 0; j < 3; j++) {
+            body[i][j] = 0;
+        }
+    }
+}
 
+Matr3::Matr3(Vec3 v1, Vec3 v2, Vec3 v3) {
+    body[0][0] = v1.x;
+    body[1][0] = v1.y;
+    body[2][0] = v1.z;
+    body[0][1] = v2.x;
+    body[1][1] = v2.y;
+    body[2][1] = v2.z;
+    body[0][2] = v3.x;
+    body[1][2] = v3.y;
+    body[2][2] = v3.z;
+}
+
+Matr3::Matr3(double a11, double a12, double a13, double a21, double a22, double a23, double a31, double a32, double a33) {
+    body[0][0] = a11;
+    body[1][0] = a21;
+    body[2][0] = a31;
+    body[0][1] = a12;
+    body[1][1] = a22;
+    body[2][1] = a32;
+    body[0][2] = a13;
+    body[1][2] = a23;
+    body[2][2] = a33;
+}
+
+void Matr3::trans() {
+    for(short i = 0; i < 3; i++) {
+        for(short j = i + 1; j < 3; j++) {
+            double t = body[i][j];
+            body[i][j] = body[j][i];
+            body[j][i] = t;
+        }
+    }
+}
+
+Matr3 Matr3::operator+(Matr3 other) {
+    Matr3 ret;
+    for(short i = 0; i < 3; i++) {
+        for(short j = 0; j < 3; j++) {
+            ret.body[i][j] = body[i][j] + other.body[i][j];
+        }
+    }
+    return ret;
+}
+
+Matr3 Matr3::operator*(Matr3 other) {
+   Matr3 ret;
+    for(short i = 0; i < 3; i++) {
+        for(short j = 0; j < 3; j++) {
+            double t = 0;
+            for(short k = 0; k < 3; k++) {
+                t += body[i][k] * other.body[k][j]; 
+            }
+            ret.body[i][j] = t;
+        }
+    }
+    return ret;
+}
+
+Vec3 Matr3::operator*(Vec3 other) {
+    Vec3 ret;
+    ret.x = body[0][0] * other.x + body[0][1] * other.y + body[0][2] * other.z;
+    ret.y = body[1][0] * other.x + body[1][1] * other.y + body[1][2] * other.z;
+    ret.z = body[2][0] * other.x + body[2][1] * other.y + body[2][2] * other.z;
+    return ret;
+}
 
