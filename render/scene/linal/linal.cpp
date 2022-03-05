@@ -17,8 +17,16 @@ Vec3::Vec3() {
 
 Vec3::Vec3(double x, double y, double z): x(x), y(y), z(z) { };
 
-double Vec3::abs() {
+double Vec3::abs() const{
     return sqrt(x * x + y * y + z * z);
+}
+
+bool Vec3::is_null() const{
+    return (x==0. and y == 0. and z == 0.);
+}
+
+bool Vec3::is_null() const{
+    return (x==0 or y == 0 or z == 0);
 }
 
 void Vec3::normalize() {
@@ -41,12 +49,27 @@ Vec3 Vec3::operator-(Vec3 other) {
     return Vec3(x - other.x, y - other.y, z - other.z);
 }
 
-Vec3 Vec3::operator*(double other) {
-    return Vec3(x * other, y * other, z * other);
+double operator*(const Vec3& a,const Vec3& b) {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+Vec3 operator*(const Vec3& a,const double b){
+    return Vec3(a.x*b, a.y*b, a.z*b);
+}
+
+Vec3 operator*(const double b,const Vec3& a){
+    return Vec3(a.x*b, a.y*b, a.z*b);
 }
 
 Vec3 Vec3::operator/(double other) {
     return Vec3(x / other, y / other, z / other);
+}
+
+double Vec3::operator[](int const& index) const{
+    if(index == 0) return x;
+    else if(index == 1) return y;
+    else if(index == 2) return z;
+    return 0;
 }
 
 double dot(Vec3 a, Vec3 b) {
