@@ -23,9 +23,7 @@ double Vec3::abs() {
 
 void Vec3::normalize() {
     double a = abs();
-    x = x / a;
-    y = y / a;
-    z = z / a;
+    x = x / a, y = y / a, z = z / a;
 }
 
 Vec3 Vec3::normalized() {
@@ -75,27 +73,15 @@ Matr3::Matr3() {
 }
 
 Matr3::Matr3(Vec3 v1, Vec3 v2, Vec3 v3) {
-    body[0][0] = v1.x;
-    body[1][0] = v1.y;
-    body[2][0] = v1.z;
-    body[0][1] = v2.x;
-    body[1][1] = v2.y;
-    body[2][1] = v2.z;
-    body[0][2] = v3.x;
-    body[1][2] = v3.y;
-    body[2][2] = v3.z;
+    body[0][0] = v1.x, body[0][1] = v2.x, body[0][2] = v3.x;
+    body[1][0] = v1.y, body[1][1] = v2.y, body[1][2] = v3.y;
+    body[2][0] = v1.z, body[2][1] = v2.z, body[2][2] = v3.z;
 }
 
 Matr3::Matr3(double a11, double a12, double a13, double a21, double a22, double a23, double a31, double a32, double a33) {
-    body[0][0] = a11;
-    body[1][0] = a21;
-    body[2][0] = a31;
-    body[0][1] = a12;
-    body[1][1] = a22;
-    body[2][1] = a32;
-    body[0][2] = a13;
-    body[1][2] = a23;
-    body[2][2] = a33;
+    body[0][0] = a11, body[0][1] = a12, body[0][2] = a13;
+    body[1][0] = a21, body[1][1] = a22, body[1][2] = a23;
+    body[2][0] = a31, body[2][1] = a32, body[2][2] = a33;
 }
 
 void Matr3::trans() {
