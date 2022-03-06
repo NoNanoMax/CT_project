@@ -17,6 +17,7 @@ Vec3::Vec3() {
 
 Vec3::Vec3(double x, double y, double z): x(x), y(y), z(z) { };
 
+
 double Vec3::abs() const{
     return sqrt(x * x + y * y + z * z);
 }
@@ -24,6 +25,11 @@ double Vec3::abs() const{
 bool Vec3::is_null() const{
     return (x==0. and y == 0. and z == 0.);
 }
+
+Vec3 operator@(const Vec3& a,const Vec3& b){
+    return Vec3();
+}
+
 
 bool Vec3::is_null() const{
     return (x==0 or y == 0 or z == 0);
@@ -76,7 +82,8 @@ double dot(Vec3 a, Vec3 b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-Vec3 vec(Vec3 a, Vec3 b) {
+
+Vec3 vv(Vec3 a, Vec3 b) {
     double new_x = a.y * b.z - a.z * b.y;
     double new_y = a.z * b.x - a.x * b.z;
     double new_z = a.x * b.y - a.y * b.x;
@@ -85,7 +92,8 @@ Vec3 vec(Vec3 a, Vec3 b) {
 
 // Ray ---------------------------------------------
 
-Ray::Ray(Vec3 from, Vec3 to): from(from), to(to) { };
+Ray::Ray(Vec3 from, Vec3 dir, double mi, double ma, double x_, double y_):
+     from(from), dir(dir), min_q(mi), max_q(ma), x(x_), y(y_) { };
 
 // Matr3 ---------------------------------------------
 
