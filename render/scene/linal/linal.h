@@ -19,16 +19,14 @@ public:
     Vec3 operator+(Vec3 other);
     Vec3 operator-(Vec3 other);
     Vec3 operator/(double other);
-    
     double operator[](int const& index) const;
 };
 
-Vec3 vv(const Vec3& a,const Vec3& b);
-double operator*(const Vec3& a,const Vec3& b);
-Vec3 operator*(const Vec3& a,const double b);
-Vec3 operator*(const double a,const Vec3& b);
+Vec3 vv(const Vec3& a, const Vec3& b);
+double dot(const Vec3& a, const Vec3& b);
+Vec3 operator*(const Vec3& a, const double b);
+Vec3 operator*(const double a, const Vec3& b);
 
-double dot(Vec3 a, Vec3 b);
 
 //поля: точка отсчета, направление и минимальный и максимальный множители 
 //на каторые нужно домножать вектор направления при поиске решения
