@@ -9,7 +9,7 @@
 #include "linal.h"
 #include "math.h"
 
-// Vec3 ---------------------------------------------
+// --------------------------------------------- Vec3 ---------------------------------------------
 
 Vec3::Vec3() {
     x = 0, y = 0, z = 0;
@@ -19,14 +19,6 @@ Vec3::Vec3(double x, double y, double z): x(x), y(y), z(z) { };
 
 double Vec3::abs() const {
     return sqrt(x * x + y * y + z * z);
-}
-
-bool Vec3::is_null() const {
-    return (x == 0. && y == 0. && z == 0.);
-}
-
-bool Vec3::any_null() const {
-    return (x == 0 || y == 0 || z == 0);
 }
 
 void Vec3::normalize() {
@@ -46,6 +38,12 @@ Vec3 Vec3::operator-(Vec3 other) {
     return Vec3(x - other.x, y - other.y, z - other.z);
 }
 
+double Vec3::operator[](int const& index) const {
+    if(index == 0) return x;
+    else if(index == 1) return y;
+    else return z;
+}
+
 Vec3 operator*(const Vec3& a,const double b) {
     return Vec3(a.x * b, a.y * b, a.z * b);
 }
@@ -58,29 +56,26 @@ Vec3 Vec3::operator/(double other) {
     return Vec3(x / other, y / other, z / other);
 }
 
-double Vec3::operator[](int const& index) const {
-    if(index == 0) return x;
-    else if(index == 1) return y;
-    else return z;
-}
-
-double dot(Vec3 a, Vec3 b) {
+double dot(const Vec3& a, const Vec3& b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-Vec3 vv(Vec3 a, Vec3 b) {
+Vec3 vv(const Vec3& a, const Vec3& b) {
     double new_x = a.y * b.z - a.z * b.y;
     double new_y = a.z * b.x - a.x * b.z;
     double new_z = a.x * b.y - a.y * b.x;
     return Vec3(new_x, new_y, new_z);
 }
+double cos(const Vec3& a, const Vec3& b) {
+    return dot(a, b) / a.abs() / b.abs();
+}
 
-// Ray ---------------------------------------------
+// --------------------------------------------- Ray ---------------------------------------------
 
-Ray::Ray(Vec3 from, Vec3 dir, double mi, double ma, double x_, double y_):
-     from(from), dir(dir), min_q(mi), max_q(ma), x(x_), y(y_) { };
+Ray::Ray(Vec3 from, Vec3 dir, unsigned x, unsigned y, double intensity):
+     from(from), dir(dir), x(x), y(y), intensity(intensity) { }
 
-// Matr3 ---------------------------------------------
+// --------------------------------------------- Matr3 ---------------------------------------------
 
 Matr3::Matr3() {
     for(short i = 0; i < 3; i++) {

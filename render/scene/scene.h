@@ -8,8 +8,9 @@
 
 #include "linal/linal.h"
 #include <vector>
+#include "math.h"
 
-// figures -------------------------------
+// ------------------------------- figures -------------------------------
 
 class Figure {
 public:
@@ -32,59 +33,83 @@ public:
     std::vector<Triangle> get_body();
 };
 
-// lights -------------------------------
+// ------------------------------- lights -------------------------------
 
+// -- абстрактный класс источников света --
 class Light_source {
 public:
-    Light_source();
-    virtual double get_intense(Vec3 camera, Vec3 normal, int alpha) = 0;
-    virtual double intense() = 0;
-protected:  
-    inline double get_intence_in(const Vec3 camera, const Vec3 normal, const Vec3& direction, int alpha);
+    virtual double intensity_in_point(Vec3 point, Vec3 normal) = 0;
+};
+
+// -- класс, управляющий источниками света --
+class Lights {
+private:
+    std::vector<Light_source*> sources;
+public:
+    Lights();
+    void push_back(Light_source* source);
+    double full_intensity_in_point(Vec3 point, Vec3 normal);
 };
 
 class Ambient_light: public Light_source {
-protected:
-    double intens;
+private:
+    double intensity;
 public: 
-    Ambient_light(double inte);
-    double intense();
-    double get_intense(Vec3 camera, Vec3 normal, int alpha);
+    Ambient_light(double intensity);
+    double intensity_in_point(Vec3 point, Vec3 normal);
 };
 
 class Point_light: public Light_source {
-protected:    
-    Vec3 pos;
-    double intens;
+private:    
+    Vec3 position;
+    double intensity;
 public:
-    Point_light(Vec3 pos, double intens);
-    double intense();
-    double get_intense(Vec3 camera, Vec3 normal, int alpha);
+    Point_light(Vec3 position, double intensity);
+    double intensity_in_point(Vec3 camera, Vec3 normal);
 };
 
-class Directed_liht: public Light_source {
-protected:
+class Directed_light: public Light_source {
+private:
     Vec3 direction;
-    double intens;
+    double intensity;
 public:
-    Directed_liht(Vec3 dir, double inte);
-    double intense();
-    double get_intense(Vec3 camera, Vec3 normal, int alpha);
+    Directed_light(Vec3 direction, double intensity);
+    double intensity_in_point(Vec3 camera, Vec3 normal);
 };
 
-class Light {
-    std::vector<Light_source*> light;
-    double sum_intense;
+// ------------------------------- camera -------------------------------
+
+// класс камеры, камера смотрит вдоль оси y в собственной системе координат
+class Camera {
+    Vec3 position;
+    double angles[3]; // psi, theta, pfi;
+    Matr3 rotate; // матрица поворота
+    double distance; // расстояние до экрана
+    double width, height; // ширина и высота экрана
+    unsigned width_pixels, height_pixels; // число пикселей по горизонтали и вертикали
+    Matr3 calculate_rotate();
+    Ray calculate_ray(unsigned x, unsigned y);
 public:
-    Light();
-    ~Light();
-    bool push_back(Light_source* source);
-    double get_light(Vec3 camera, Vec3 point, Vec3 normal, int alpha = -1);
+    Camera(Vec3 position, double* angels, double distance = 1, double width = 1, double height = 1, unsigned width_pixels = 1280, unsigned height_pixels = 720);
+    std::vector<std::vector<Ray> > create_rays();
 };
 
+// ------------------------------- scene -------------------------------
 
-// camera -------------------------------
+class Scene {
+    std::vector<Figure*> figures;
+    Lights lights;
 
 
+/*
+    Vec3 trace_ray(const Scene& const Sc, const Light const Li, 
+                Vec3 begin, Vec3 vec, double min_t,double max_t) const{
+    Object A;
+    Vec3 point;
+    Sc.intersect(begin, vec, min_t, max_t, &A, &point);
+    double light = Li.get_light(Sc, begin, point, A.normal(point), A.alpha());
+
+}*/
+};
 
 
