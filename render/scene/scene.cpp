@@ -37,6 +37,13 @@ Camera::Camera(Vec3 position, double* angles, double distance, double width, dou
     rotate = calculate_rotate();
 }
 
+Camera::Camera() {
+    position = Vec3(0, 0, 0);
+    angles[0] = 0, angles[1] = 0, angles[2] = 0;
+    distance = 1, width = 1, height = 1;
+    width_pixels = 1280, height_pixels = 720;
+}
+
 std::vector<std::vector<Ray> > Camera::create_rays() {
     std::vector<std::vector<Ray> > ret;
     for(unsigned x = 0; x < width_pixels; x++) {
@@ -50,5 +57,4 @@ std::vector<std::vector<Ray> > Camera::create_rays() {
 }
 
 // ------------------------------- scene -------------------------------
-
 

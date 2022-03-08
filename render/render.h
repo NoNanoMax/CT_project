@@ -7,7 +7,10 @@
 
 #include "scene/scene.h"
 
-
-
+class Renderer {
+    Scene scene;
+public:
+    Renderer();
+};
 
 
