@@ -10,7 +10,10 @@
 class Renderer {
     Scene scene;
 public:
+    Color** res;
     Renderer();
+    void read();
+    void render();
 };
 
 
