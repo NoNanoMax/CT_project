@@ -19,7 +19,7 @@ int main() {
     printf("%d %d %d\n", HEIGHT, WIDTH, 3);
    	for (int j = HEIGHT - 1; j >= 0; j--) {
         for (int i = 0; i < WIDTH; i++) {
-            printf("%03d %03d %03d ", res[i][j].r, res[i][j].r, res[i][j].r);
+            printf("%03d %03d %03d ", res[i][j].r, res[i][j].g, res[i][j].b);
         }
    	}
 	std::cout << "\n";

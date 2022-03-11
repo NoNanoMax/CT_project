@@ -92,16 +92,22 @@ Scene::Scene(std::vector<Figure*> figures, std::vector<Light_source*> lights, Ca
 void Scene::initialization(const char * input = "input.txt") {
 
     //vremennoe reshenie
-    Sphere* ps = new Sphere;
+    BuityfulSphere* ps = new BuityfulSphere;
     ps->build(Vec3(0, 5, 0), 1);
 
+    // Sphere* ps = new Sphere;
+    // ps->build(Vec3(0, 5, 0), 1);
+
     Point_light* pl = new Point_light;
-    pl->build(Vec3(0, 3, 0), 1);
+    pl->build(Vec3(2, 3, 3), 0.8);
+    Point_light* pl1 = new Point_light;
+    pl1->build(Vec3(-2, -4, -3), 0.5);
 
     Ambient_light* al = new Ambient_light();
-    al->build(0.2);
+    al->build(0.3);
 
     lights.push_back(pl);
+    lights.push_back(pl1);   
     lights.push_back(al);
 
     figures.push_back(ps);
@@ -145,8 +151,13 @@ void Scene::trace_ray(Ray ray) {
     if (intersetion_point.dir.x != 2) {
 
 
-        res[ray.x][ray.y].r += short(full_intensity_in_point(intersetion_point.from, intersetion_point.dir) * 255);
+        res[ray.x][ray.y].r += short(full_intensity_in_point(intersetion_point.from, intersetion_point.dir) * 255)*abs(dot(intersetion_point.dir, Vec3(1,0,0)));
+        res[ray.x][ray.y].g += short(full_intensity_in_point(intersetion_point.from, intersetion_point.dir) * 255)*abs(dot(intersetion_point.dir, Vec3(0,1,0)))*0.5;
+        res[ray.x][ray.y].b += short(full_intensity_in_point(intersetion_point.from, intersetion_point.dir) * 255)*abs(dot(intersetion_point.dir, Vec3(0,0,1)));
+
         if (res[ray.x][ray.y].r > 255) res[ray.x][ray.y].r = 255;
+        if (res[ray.x][ray.y].g > 255) res[ray.x][ray.y].g = 255;
+        if (res[ray.x][ray.y].b > 255) res[ray.x][ray.y].b = 255;
 
 
 

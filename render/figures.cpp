@@ -118,7 +118,38 @@ Ray Sphere::does_intersect(Ray ray) {
 }
     
 
-std::vector<Triangle> Sphere::get_body() {
-    return body;
+void BuityfulSphere::build(Vec3 center, double radius) {
+    position = center; this->radius = radius;
 }
+
+Triangle BuityfulSphere::get_intersection_triangle(Ray ray) {
+    return Triangle();
+}
+
+
+
+
+Ray BuityfulSphere::does_intersect(Ray ray) {
+    double b = 2 * dot(ray.dir, ray.from - position);
+    double c = dot(ray.from - position, ray.from - position) - radius*radius;
+    double delta = b *b - 4 * c;
+   if (delta > 0) {
+       double t1 = (-b + sqrt(delta)) / 2;
+       double t2 = (-b - sqrt(delta)) / 2;
+       if (t1 > 0 and t2 > 0) {
+           if (t1 > t2) t1 = t2;
+           Ray ret(ray.from + t1*ray.dir, (ray.from + t1*ray.dir - position).normalized(), 0, 0, 0);
+           return ret;
+        //    printf("here\n");
+       }
+           
+   }
+   return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
+}
+  
+
+
+// std::vector<Triangle> Sphere::get_body() {
+//     return body;
+// }
 

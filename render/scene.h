@@ -34,7 +34,7 @@ public:
 
 class Figure {
 public:
-    virtual std::vector<Triangle> get_body() = 0;
+    // virtual std::vector<Triangle> get_body() = 0;
     //returns point of intersection and normal else dir = (2, 0, 0)
     virtual Ray does_intersect(Ray ray) = 0;
     virtual Triangle get_intersection_triangle(Ray ray) = 0;
@@ -45,6 +45,17 @@ class Sphere : public Figure {
 public:
     void build(Vec3 center, double radius, unsigned iterations = 2);
     std::vector<Triangle> get_body();
+    Triangle get_intersection_triangle(Ray r);
+    //returns point of intersection and normal else dir = (2, 0, 0)
+    virtual Ray does_intersect(Ray ray);
+};
+
+class BuityfulSphere : public Figure {
+    Vec3 position;
+    double radius;
+public:
+    void build(Vec3 center, double radius);
+    // std::vector<Triangle> get_body(); //hz zachem eto
     Triangle get_intersection_triangle(Ray r);
     //returns point of intersection and normal else dir = (2, 0, 0)
     virtual Ray does_intersect(Ray ray);
