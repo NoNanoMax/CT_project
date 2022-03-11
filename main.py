@@ -25,7 +25,7 @@ def draw_men_with_dumplings_lol(PATH=None):
     picture = np.array(out[3:], dtype=float).reshape((H, W, C)) / 255
     plt.axis(False)
     plt.imshow(picture)
-    plt.show()
+    plt.savefig('scene.png', dpi = 300)
 
 if __name__ == "__main__":
     PATH = None

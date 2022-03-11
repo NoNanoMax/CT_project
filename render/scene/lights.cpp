@@ -13,23 +13,23 @@
 #include "math.h"
 #include "scene.h"
 
-Lights_manager::Lights_manager() { }
+// Lights_manager::Lights_manager() { }
 
-void Lights_manager::add(Light_source* source) {
-    sources.push_back(source);
-}
+// void Lights_manager::add(Light_source* source) {
+//     sources.push_back(source);
+// }
 
-void Lights_manager::clear() {
-    sources.clear();
-}
+// void Lights_manager::clear() {
+//     sources.clear();
+// }
 
-double Lights_manager::full_intensity_in_point(Vec3 point, Vec3 normal) {
-    double ret = 0;
-    for(std::vector<Light_source*>::iterator it = sources.begin(); it != sources.end(); it++) {
-        ret += (*it)->intensity_in_point(point, normal);
-    }
-    return ret;
-}
+// double Lights_manager::full_intensity_in_point(Vec3 point, Vec3 normal) {
+//     double ret = 0;
+//     for(std::vector<Light_source*>::iterator it = sources.begin(); it != sources.end(); it++) {
+//         ret += (*it)->intensity_in_point(point, normal);
+//     }
+//     return ret;
+//}
 
 Ambient_light::Ambient_light(double intensity):
     intensity(intensity)

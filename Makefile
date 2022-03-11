@@ -1,14 +1,14 @@
 all: run
 
-run: main.o linal.o scene.o figures.o lights.o material.o render.o
-	c++ main.o linal.o scene.o figures.o lights.o material.o render.o -o run
+run: main.o linal.o scene.o figures.o lights.o material.o 
+	c++ main.o linal.o scene.o figures.o lights.o material.o  -o run
 
 
 main.o: main.cpp
 	c++ main.cpp -c
 
-render.o: render/render.cpp
-	c++ render/render.cpp -c
+# render.o: render/render.cpp
+# 	c++ render/render.cpp -c
 
 linal.o: render/scene/linal/linal.cpp
 	c++ render/scene/linal/linal.cpp -c

@@ -17,10 +17,13 @@ void Renderer::read() {
     ps->build(Vec3(0, 5, 0), 1);
 
     Point_light* pl = new Point_light;
-    pl->build(Vec3(0, 5, 5), 1);
+    pl->build(Vec3(0, 3, 0), 1);
+
+    Ambient_light* al = new Ambient_light(0.3);
 
     scene.lights_add(pl);
     scene.figures_add(ps);
+    scene.lights_add(al);
 }
 
 void Renderer::render() {

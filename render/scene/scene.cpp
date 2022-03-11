@@ -7,6 +7,13 @@
 */
 
 #include <vector>
+
+#include <map>
+#include <fstream>
+#include <sstream>
+#include <cassert>
+
+
 #include <string>
 #include "math.h"
 #include "scene.h"
@@ -62,34 +69,34 @@ Color** Scene::get_res() {
     return res;
 }
 
-std::vector<Figure*> Scene::get_figures() {
-    return figures;
-}
+// std::vector<Figure*> Scene::get_figures() {
+//     return figures;
+// }
 
-void Scene::res_clear() {
-    for (short i = 0; i < WIDTH; i++) {
-        for (short j = 0; j < HEIGHT; j++) {
-            //res[i][j].make(std::string("black"));
-            res[i][j].r = 0, res[i][j].g = 0, res[i][j].b = 0;
-        }
-    }
-}
+// void Scene::res_clear() {
+//     for (short i = 0; i < WIDTH; i++) {
+//         for (short j = 0; j < HEIGHT; j++) {
+//             //res[i][j].make(std::string("black"));
+//             res[i][j].r = 0, res[i][j].g = 0, res[i][j].b = 0;
+//         }
+//     }
+// }
 
-void Scene::figures_clear() {
-    figures.clear();
-}
+// void Scene::figures_clear() {
+//     figures.clear();
+// }
 
-void Scene::lights_clear() {
-    lights.clear();
-}
+// void Scene::lights_clear() {
+//     lights.clear();
+// }
 
-void Scene::figures_add(Figure* figure) {
-    figures.push_back(figure);
-}
+// void Scene::figures_add(Figure* figure) {
+//     figures.push_back(figure);
+// }
 
-void Scene::lights_add(Light_source* light) {
-    lights.add(light);
-}
+// void Scene::lights_add(Light_source* light) {
+//     lights.add(light);
+// }
 
 Scene::Scene() {
     res = new Color*[WIDTH];
@@ -105,8 +112,36 @@ Scene::~Scene() {
     delete[] res;
 }
 
-Scene::Scene(std::vector<Figure*> figures, Lights_manager lights, Camera camera):
+Scene::Scene(std::vector<Figure*> figures, std::vector<Light_source*>, Camera camera):
     figures(figures), lights(lights), camera(camera) {
+}
+
+
+//build figures and lights from input, deafult "input.txt"
+void Scene::initialization(const char * input = "input.txt") {
+
+    //vremennoe reshenie
+    Sphere* ps = new Sphere;
+    ps->build(Vec3(0, 5, 0), 1);
+
+    Point_light* pl = new Point_light;
+    pl->build(Vec3(0, 3, 0), 1);
+
+    Ambient_light* al = new Ambient_light(0.1);
+
+    lights.push_back(pl);
+    lights.push_back(al);
+
+    figures.push_back(ps);
+}
+
+
+double Scene::full_intensity_in_point(Vec3 point, Vec3 normal) {
+    double ret = 0;
+    for(std::vector<Light_source*>::iterator it = lights.begin(); it != lights.end(); it++) {
+        ret += (*it)->intensity_in_point(point, normal);
+    }
+    return ret;
 }
 
 void Scene::trace_ray(Ray ray) {
@@ -122,7 +157,8 @@ void Scene::trace_ray(Ray ray) {
     if (!intersected.is_empty()) {
         Vec3 point = intersected.get_intersection_point(ray);
         Vec3 normal = intersected.get_normal(point);
-        res[ray.x][ray.y].r += short(lights.full_intensity_in_point(point, normal) * 255);
+        res[ray.x][ray.y].r += short(full_intensity_in_point(point, normal) * 255);
+        if (res[ray.x][ray.y].r > 255) res[ray.x][ray.y].r = 255;
     }
 }
 

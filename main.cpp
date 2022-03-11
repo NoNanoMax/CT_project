@@ -11,10 +11,10 @@
 #include <vector>
 
 int main() {
-    Renderer r;
-    r.read();
+    Scene r;
+    r.initialization("input.txt");
     r.render();
-    Color** res = r.res;
+    Color** res = r.get_res();
 	
     printf("%d %d %d\n", HEIGHT, WIDTH, 3);
    	for (int j = HEIGHT - 1; j >= 0; j--) {

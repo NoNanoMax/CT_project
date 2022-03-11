@@ -6,8 +6,8 @@
 
 */
 
-#define WIDTH 50
-#define HEIGHT 40
+#define WIDTH 512
+#define HEIGHT 512
 
 #include "linal/linal.h"
 #include "material/material.h"
@@ -52,18 +52,18 @@ public:
 class Light_source {
 public:
     virtual double intensity_in_point(Vec3 point, Vec3 normal) = 0;
-};
+    };
 
 // -- Класс, управляющий источниками света --
-class Lights_manager {
-private:
-    std::vector<Light_source*> sources;
-public:
-    Lights_manager();
-    void add(Light_source* source);
-    void clear();
-    double full_intensity_in_point(Vec3 point, Vec3 normal);
-};
+// class Lights_manager {
+// private:
+//     std::vector<Light_source*> sources;
+// public:
+//     Lights_manager();
+//     void add(Light_source* source);
+//     void clear();
+//     double full_intensity_in_point(Vec3 point, Vec3 normal);
+// };
 
 class Ambient_light: public Light_source {
 private:
@@ -114,22 +114,29 @@ public:
 
 class Scene {
     std::vector<Figure*> figures;
-    Lights_manager lights;
+    std::vector<Light_source*> lights;
+ 
     Camera camera;
     Color** res;
 public:
     Scene();
     ~Scene();
-    Scene(std::vector<Figure*> figures, Lights_manager lights, Camera camera);
+    Scene(std::vector<Figure*> figures, std::vector<Light_source*> lights, Camera camera);
+
     Color** get_res();
-    std::vector<Figure*> get_figures();
-    void res_clear();
-    void lights_clear();
-    void lights_add(Light_source* light);
-    void figures_clear();
-    void figures_add(Figure* figure);
-    void trace_ray(Ray ray);
+
+    // std::vector<Figure*> get_figures();
+    // void res_clear();
+    // void lights_clear();
+    // void lights_add(Light_source* light);
+    // void figures_clear();
+    // void figures_add(Figure* figure);
+    
+    void initialization(const char * input);
+    
     void render();
-};
+    void trace_ray(Ray ray);
+    double full_intensity_in_point(Vec3 point, Vec3 normal);
+    };
 
 
