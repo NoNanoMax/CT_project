@@ -93,7 +93,7 @@ void Scene::initialization(const char * input = "input.txt") {
 
     //vremennoe reshenie
     Sphere* ps = new Sphere;
-    ps->build(Vec3(0, 5, 0), 1, 4);
+    ps->build(Vec3(0, 5, 0), 1);
 
     Point_light* pl = new Point_light;
     pl->build(Vec3(0, 3, 0), 1);
@@ -107,6 +107,20 @@ void Scene::initialization(const char * input = "input.txt") {
     figures.push_back(ps);
 }
 
+//returns normal at intesection point else vector direction equals (2, 0, 0)
+inline Ray Scene::get_first_intersection(Ray ray) {
+    Ray intersected(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0); // точка пересечения
+    double min = 1e5; // минимум расстояния до пересеченного треугольника
+    for (std::vector<Figure*>::iterator it = figures.begin(); it != figures.end(); it++) {
+        Ray point = (*it)->does_intersect(ray); 
+        if (!(point.dir.x == 2) && (point.from - ray.from).abs() < min) {
+            min = (point.from - ray.from).abs();
+            intersected = point;
+        }
+    }
+    //if no intersection returns "negative" result
+    return Ray(intersected.from, intersected.dir, 0, 0, 0);
+}
 
 double Scene::full_intensity_in_point(Vec3 point, Vec3 normal) {
     double ret = 0;
@@ -117,20 +131,25 @@ double Scene::full_intensity_in_point(Vec3 point, Vec3 normal) {
 }
 
 void Scene::trace_ray(Ray ray) {
-    Triangle intersected; // треугольник пересечения
-    double min = 1e5; // минимум расстояния до пересеченного треугольника
-    for (std::vector<Figure*>::iterator it = figures.begin(); it != figures.end(); it++) {
-        Triangle tr = (*it)->get_intersection_triangle(ray); // получаем треугольник от фигуры
-        if (!tr.is_empty() && (tr.get_intersection_point(ray) - ray.from).abs() < min) {
-            min = (tr.get_intersection_point(ray) - ray.from).abs();
-            intersected = tr;
-        }
-    }
-    if (!intersected.is_empty()) {
-        Vec3 point = intersected.get_intersection_point(ray);
-        Vec3 normal = intersected.get_normal(point);
-        res[ray.x][ray.y].r += short(full_intensity_in_point(point, normal) * 255);
+    // Triangle intersected; // треугольник пересечения
+    // double min = 1e5; // минимум расстояния до пересеченного треугольника
+    // for (std::vector<Figure*>::iterator it = figures.begin(); it != figures.end(); it++) {
+    //     Triangle tr = (*it)->get_intersection_triangle(ray); // получаем треугольник от фигуры
+    //     if (!tr.is_empty() && (tr.get_intersection_point(ray) - ray.from).abs() < min) {
+    //         min = (tr.get_intersection_point(ray) - ray.from).abs();
+    //         intersected = tr;
+    //     }
+    // }
+
+    Ray intersetion_point = get_first_intersection(ray);
+    if (intersetion_point.dir.x != 2) {
+
+
+        res[ray.x][ray.y].r += short(full_intensity_in_point(intersetion_point.from, intersetion_point.dir) * 255);
         if (res[ray.x][ray.y].r > 255) res[ray.x][ray.y].r = 255;
+
+
+
     }
 }
 

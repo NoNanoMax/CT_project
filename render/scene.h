@@ -35,6 +35,8 @@ public:
 class Figure {
 public:
     virtual std::vector<Triangle> get_body() = 0;
+    //returns point of intersection and normal else dir = (2, 0, 0)
+    virtual Ray does_intersect(Ray ray) = 0;
     virtual Triangle get_intersection_triangle(Ray ray) = 0;
 };
 
@@ -44,6 +46,8 @@ public:
     void build(Vec3 center, double radius, unsigned iterations = 2);
     std::vector<Triangle> get_body();
     Triangle get_intersection_triangle(Ray r);
+    //returns point of intersection and normal else dir = (2, 0, 0)
+    virtual Ray does_intersect(Ray ray);
 };
 
 // ------------------------------- lights -------------------------------
@@ -115,10 +119,17 @@ public:
     Scene(std::vector<Figure*> figures, std::vector<Light_source*> lights, Camera camera);
 
     Color** get_res();
+
+    //fills scene with objects
     void initialization(const char * input);
+
+    //calculates everything
     void render();
+    
+    //inner methods
     void trace_ray(Ray ray);
     double full_intensity_in_point(Vec3 point, Vec3 normal);
-    };
+    Ray get_first_intersection(Ray ray);
+};
 
 

@@ -33,7 +33,9 @@ double cos(const Vec3& a, const Vec3& b);
 // x и y - координаны зкрана соотв этому лучу 
 class Ray {
 public:
+    //position
     Vec3 from;
+    //direction
     Vec3 dir;
     unsigned x, y;
     double intensity;

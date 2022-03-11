@@ -107,6 +107,17 @@ Triangle Sphere::get_intersection_triangle(Ray ray) {
     return ret;
 }
 
+Ray Sphere::does_intersect(Ray ray) {
+    Triangle intersected; // треугольник пересечения
+       
+    Triangle tr = get_intersection_triangle(ray); // получаем треугольник от фигуры
+    if (!tr.is_empty())
+        return Ray(tr.get_intersection_point(ray), tr.get_normal(tr.get_intersection_point(ray)), 0, 0, 0);
+    else 
+        return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
+}
+    
+
 std::vector<Triangle> Sphere::get_body() {
     return body;
 }
