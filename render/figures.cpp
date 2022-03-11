@@ -160,9 +160,9 @@ Ray BeautifulPlane::does_intersect(Ray ray) {
     if (k == 0)
         return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
     double t = (this->d - dot(ray.from, normal))/k;
-    // printf("t: %f\n", t);
+
     if (t < 0)
         return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
-    return Ray(ray.from + t*ray.dir, normal, 0, 0, 0);
+    return Ray(ray.from + (t-1e-8)*ray.dir, normal, 0, 0, 0);
 }
 
