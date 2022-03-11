@@ -6,8 +6,8 @@
 
 */
 
-#define WIDTH 600
-#define HEIGHT 600
+#define WIDTH 1000
+#define HEIGHT 1000
 
 #include "linal/linal.h"
 #include "material/material.h"
@@ -50,7 +50,7 @@ public:
     virtual Ray does_intersect(Ray ray);
 };
 
-class BuityfulSphere : public Figure {
+class BeautifulSphere : public Figure {
     Vec3 position;
     double radius;
 public:
@@ -61,12 +61,23 @@ public:
     virtual Ray does_intersect(Ray ray);
 };
 
+
+class BeautifulPlane : public Figure {
+    Vec3 normal = Vec3(0,0,1);
+    double d = 0;
+public:
+    void build(Vec3 normal, double d);
+    virtual Ray does_intersect(Ray r);
+    Triangle get_intersection_triangle(Ray r);
+    
+};
 // ------------------------------- lights -------------------------------
 
 // -- Абстрактный класс источников света --
 class Light_source {
 public:
     virtual double intensity_in_point(Vec3 point, Vec3 normal) = 0;
+    virtual Vec3 get_position(Vec3 point) = 0;
 };
 
 class Ambient_light: public Light_source {
@@ -75,6 +86,7 @@ private:
 public: 
     Ambient_light();
     void build(double intensity);
+    Vec3 get_position(Vec3 point);
     double intensity_in_point(Vec3 point, Vec3 normal);
 };
 
@@ -85,6 +97,7 @@ private:
 public:
     Point_light();
     void build(Vec3 position, double intensity);
+    Vec3 get_position(Vec3 point);
     double intensity_in_point(Vec3 camera, Vec3 normal);
 };
 
@@ -95,6 +108,7 @@ private:
 public:
     Directed_light();
     void build(Vec3 direction, double intensity);
+    Vec3 get_position(Vec3 point);
     double intensity_in_point(Vec3 camera, Vec3 normal);
 };
 

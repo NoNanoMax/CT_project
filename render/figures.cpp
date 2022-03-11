@@ -118,18 +118,15 @@ Ray Sphere::does_intersect(Ray ray) {
 }
     
 
-void BuityfulSphere::build(Vec3 center, double radius) {
+void BeautifulSphere::build(Vec3 center, double radius) {
     position = center; this->radius = radius;
 }
 
-Triangle BuityfulSphere::get_intersection_triangle(Ray ray) {
+Triangle BeautifulSphere::get_intersection_triangle(Ray ray) {
     return Triangle();
 }
 
-
-
-
-Ray BuityfulSphere::does_intersect(Ray ray) {
+Ray BeautifulSphere::does_intersect(Ray ray) {
     double b = 2 * dot(ray.dir, ray.from - position);
     double c = dot(ray.from - position, ray.from - position) - radius*radius;
     double delta = b *b - 4 * c;
@@ -148,8 +145,24 @@ Ray BuityfulSphere::does_intersect(Ray ray) {
 }
   
 
+//plane comtains (0, 0, normal.from.z)
+void BeautifulPlane::build(Vec3 normal, double d) {
+    this->normal = normal;
+    this->d = d;
+}
 
-// std::vector<Triangle> Sphere::get_body() {
-//     return body;
-// }
+Triangle BeautifulPlane::get_intersection_triangle(Ray ray) {
+    return Triangle();
+}
+
+Ray BeautifulPlane::does_intersect(Ray ray) {
+    double k = dot(normal, ray.dir);
+    if (k == 0)
+        return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
+    double t = (this->d - dot(ray.from, normal))/k;
+    // printf("t: %f\n", t);
+    if (t < 0)
+        return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
+    return Ray(ray.from + t*ray.dir, normal, 0, 0, 0);
+}
 

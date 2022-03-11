@@ -52,3 +52,15 @@ double Directed_light::intensity_in_point(Vec3 point, Vec3 normal) {
     double ret = - cos(direction, normal) * intensity;
     return (ret > 0 ? ret : 0);
 }
+
+Vec3 Point_light::get_position(Vec3 point) {
+    return this->position;
+}
+
+Vec3 Directed_light::get_position(Vec3 point) {
+    return point - this->direction;
+}
+
+Vec3 Ambient_light::get_position(Vec3 point) {
+    return point;
+}
