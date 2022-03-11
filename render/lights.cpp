@@ -13,31 +13,19 @@
 #include "math.h"
 #include "scene.h"
 
-// Lights_manager::Lights_manager() { }
+// ------------------------------- Ambient_light -------------------------------
 
-// void Lights_manager::add(Light_source* source) {
-//     sources.push_back(source);
-// }
+Ambient_light::Ambient_light() { }
 
-// void Lights_manager::clear() {
-//     sources.clear();
-// }
-
-// double Lights_manager::full_intensity_in_point(Vec3 point, Vec3 normal) {
-//     double ret = 0;
-//     for(std::vector<Light_source*>::iterator it = sources.begin(); it != sources.end(); it++) {
-//         ret += (*it)->intensity_in_point(point, normal);
-//     }
-//     return ret;
-//}
-
-Ambient_light::Ambient_light(double intensity):
-    intensity(intensity)
-{ }
+void Ambient_light::build(double intensity) {
+    this->intensity = intensity;
+}
 
 double Ambient_light::intensity_in_point(Vec3 point, Vec3 normal) {
     return intensity;
 };
+
+// ------------------------------- Point_light -------------------------------
 
 Point_light::Point_light() { }
 
@@ -46,16 +34,19 @@ void Point_light::build(Vec3 position, double intensity) {
     this->intensity = intensity;
 }
 
-
 double Point_light::intensity_in_point(Vec3 point, Vec3 normal) {
     double ret = - cos(point - position, normal) * intensity;
     return (ret > 0 ? ret : 0);
 }
 
+// ------------------------------- Directed_light -------------------------------
 
-Directed_light::Directed_light(Vec3 direction, double intensity):
-    direction(direction), intensity(intensity)
-{ }
+Directed_light::Directed_light() { }
+
+void Directed_light::build(Vec3 direction, double intensity){
+    this->direction = direction;
+    this->intensity = intensity;
+}
 
 double Directed_light::intensity_in_point(Vec3 point, Vec3 normal) {
     double ret = - cos(direction, normal) * intensity;

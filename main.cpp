@@ -6,7 +6,7 @@
 */
 
 
-#include "render/render.h"
+#include "render/scene.h"
 #include "iostream"
 #include <vector>
 
