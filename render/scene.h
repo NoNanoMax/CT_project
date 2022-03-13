@@ -153,16 +153,17 @@ class Camera: public Object {
     Vec3 position;
     double angles[3]; // psi, theta, pfi;
     Matr3 rotate; // матрица поворота
-    double FOV; // ширина поля зрения вдоль WIDTH: 1,57 - 90 Градусов
-    double distance; // расстояние до экрана
-    double width, height; // ширина и высота экрана
+    double FOV_X, FOV_Y; // ширина поля зрения вдоль WIDTH: 1,57 - 90 Градусов
+    int X, Y; // ширина и высота экрана
     Matr3 calculate_rotate();
     Ray calculate_ray(unsigned x, unsigned y);
 public:
-Object* clone(std::vector<std::string> const & arg);
+    int height() const;
+    int width() const;
+    Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
     Camera(); // пустой конструктор (источник в начале координат, углы нулевые, расстояние, ширина, высота единицы)
-    Camera(Vec3 position, Vec3 angels, double distance = 1, double width = 1, double height = 1);
+    Camera(Vec3 position, Vec3 angels, double FOV_X, int X, int Y);
     std::vector<std::vector<Ray>> create_rays(); // генерация лучей
 };
 
@@ -179,6 +180,7 @@ public:
     ~Scene();
     Scene(std::vector<Figure*> figures, std::vector<Light_source*> lights, Camera* camera);
 
+    const Camera* get_camera() const;
     Color** get_res();
 
     //fills scene with objects

@@ -15,10 +15,12 @@ int main() {
     r.initialization("scene.ass");
     r.render();
     Color** res = r.get_res();
-	
-    printf("%d %d %d\n", HEIGHT, WIDTH, 3);
-   	for (int j = HEIGHT - 1; j >= 0; j--) {
-        for (int i = 0; i < WIDTH; i++) {
+    int height =  r.get_camera()->height();
+    int width = r.get_camera()->width();
+    printf("%d %d %d\n", height, width, 3);
+    
+   	for (int j = height - 1; j >= 0; j--) {
+        for (int i = 0; i < width; i++) {
             printf("%03d %03d %03d ", res[i][j].r, res[i][j].g, res[i][j].b);
         }
    	}

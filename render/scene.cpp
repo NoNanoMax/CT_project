@@ -34,40 +34,47 @@ Matr3 Camera::calculate_rotate() {
 }
 
 Ray Camera::calculate_ray(unsigned x, unsigned y) {
-    
- 
 
-    Vec3 screen_point(width * x / WIDTH - width / 2 + this->position.x, 1 + this->position.y, height  * y / HEIGHT - height / 2 + this->position.z);
-    Vec3 direction(rotate * (screen_point - position).normalized());
-    return Ray(position, direction);
+    Vec3 point(2*tan(FOV_X/2) * (x*1.0 / X - 0.5), 1, 2*tan(FOV_Y/2) * (y *1.0/ Y - 0.5));
+    Vec3 screen_point = point + position;
+    Vec3 direction(rotate *point);
+    return Ray(position, direction.normalized());
 }
 
-Camera::Camera(Vec3 position, Vec3 angles, double distance, double width, double height):
-    position(position), distance(distance), width(width), height(height) {
+Camera::Camera(Vec3 position, Vec3 angles, double FOV_X, int X = WIDTH, int Y = HEIGHT):
+    position(position), FOV_X(FOV_X), X(X), Y(Y) {
     for (short i = 0; i < 3; i++) this->angles[i] = angles[i];
     rotate = calculate_rotate();
+    FOV_Y = 2* atan(tan(FOV_X/2)*(Y*1.00/X));
 }
 
 Camera::Camera() {
     position = Vec3(0, 0, 0);
     angles[0] = 0, angles[1] = 0, angles[2] = 0;
-    FOV = 0.7;
-
-    width = 2*tan(FOV/2);
-    height = (width * HEIGHT)/WIDTH;
+    X = WIDTH;
+    Y = HEIGHT;
+    FOV_X = 0.7;
+    FOV_Y = 2* atan(tan(0.7/2)* (Y/X));
 
     rotate = calculate_rotate();
 }
 
+int Camera::height() const{
+    return Y;
+}
+
+int Camera::width() const{
+    return X;
+}
 
 //res Ray[Width][Hight]
 std::vector<std::vector<Ray>> Camera::create_rays() {
     std::vector<std::vector<Ray>> ret;
     std::vector<Ray> _a;
-    for (int i = 0; i < WIDTH; i++)
+    for (int i = 0; i < X; i++)
         ret.push_back(_a);
-    for (unsigned x = 0; x < WIDTH; x++) {
-        for (unsigned y = 0; y < HEIGHT; y++) {
+    for (unsigned x = 0; x < X; x++) {
+        for (unsigned y = 0; y < Y; y++) {
             ret[x].push_back(calculate_ray(x, y));
         }
     }
@@ -78,15 +85,20 @@ std::vector<std::vector<Ray>> Camera::create_rays() {
 Object* Camera::clone(std::vector<std::string> const & arg){
    // Vec3 position, Vec3 angles, double distance, double width, double height
     assert(arg.size() >= 9);
-    Camera* rez = new Camera();
-    rez->position = Vec3(atof(arg[0].c_str()), atof(arg[1].c_str()), atof(arg[2].c_str()));
-    rez->angles[0] = atof(arg[3].c_str());
-    rez->angles[1] = atof(arg[4].c_str());
-    rez->angles[2] = atof(arg[5].c_str());
-    rez->distance = atof(arg[6].c_str());
-    rez->width = atof(arg[7].c_str());
-    rez->height = atof(arg[8].c_str());
-    rez->rotate = calculate_rotate();
+    Camera* rez = new Camera(
+        Vec3(atof(arg[0].c_str()), atof(arg[1].c_str()), atof(arg[2].c_str())),
+        Vec3(atof(arg[3].c_str()), atof(arg[4].c_str()), atof(arg[5].c_str())),
+        atof(arg[6].c_str()), atof(arg[7].c_str()),  atof(arg[8].c_str())
+    );
+    /*
+    rez->position = ;
+    rez->angles[0] = ;
+    rez->angles[1] = ;
+    rez->angles[2] = 
+    rez->FOV_X = ;
+    rez->X = a;
+    rez->Y = atof(arg[8].c_str());
+    rez->rotate = calculate_rotate();*/
     return rez;
 }
 
@@ -102,18 +114,23 @@ Color** Scene::get_res() {
     return res;
 }
 
+const Camera* Scene::get_camera() const{
+    return camera;
+};
+
 Scene::Scene() {
-    res = new Color*[WIDTH];
-    for (short i = 0; i < WIDTH; i++) {
-        res[i] = new Color[HEIGHT];
-    }
+    // res = new Color*[WIDTH];
+    // for (short i = 0; i < WIDTH; i++) {
+    //     res[i] = new Color[HEIGHT];
+    // }
 }
 
 Scene::~Scene() {
-    for (short i = 0; i < WIDTH; i++) {
+    for (short i = 0; i < camera->width(); i++) {
         delete[] res[i];
     }
     delete[] res;
+    delete camera;
 }
 
 Scene::Scene(std::vector<Figure*> figures, std::vector<Light_source*> lights, Camera* camera):
@@ -237,9 +254,16 @@ Color Scene::trace_ray(Ray ray) {
 void Scene::render() {
     std::vector<std::vector<Ray>> rays = camera->create_rays();
 
+    int height =  camera->height();
+    int width = camera->width();
 
-    for (unsigned x = 0; x < WIDTH; x++) {
-        for (unsigned y = 0; y < HEIGHT; y++) {
+    res = new Color*[width];
+     for (short i = 0; i < width; i++) {
+         res[i] = new Color[height];
+    }
+
+    for (unsigned x = 0; x < width; x++) {
+        for (unsigned y = 0; y < height; y++) {
             // int pos_x = rays[x][y].x, pos_y = rays[x][y].y;
             res[x][y] = trace_ray(rays[x][y]);
             
