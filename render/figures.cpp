@@ -112,19 +112,37 @@ Ray Sphere::does_intersect(Ray ray) {
        
     Triangle tr = get_intersection_triangle(ray); // получаем треугольник от фигуры
     if (!tr.is_empty())
-        return Ray(tr.get_intersection_point(ray), tr.get_normal(tr.get_intersection_point(ray)), 0, 0, 0);
+        return Ray(tr.get_intersection_point(ray), tr.get_normal(tr.get_intersection_point(ray)));
     else 
-        return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
+        return Ray(Vec3(0,0,0), Vec3(2,0,0));
 }
-    
 
+std::pair<int,std::string> Sphere::name() const{
+    return std::pair<int,std::string>(FIGURE, "Sphere");
+}
+
+    
 void BeautifulSphere::build(Vec3 center, double radius) {
     position = center; this->radius = radius;
+}
+
+Object* BeautifulSphere::clone(std::vector<std::string> const &arg){
+    assert(arg.size() >= 4);
+    BeautifulSphere* rez = new BeautifulSphere();
+    rez->position =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
+    rez->radius = atof(arg[3].c_str());
+    return rez;
+}
+
+std::pair<int,std::string> BeautifulSphere::name() const{
+    return std::pair<int,std::string>(FIGURE,"BeautifulSphere");
 }
 
 Triangle BeautifulSphere::get_intersection_triangle(Ray ray) {
     return Triangle();
 }
+
+BeautifulSphere::BeautifulSphere(){}
 
 Ray BeautifulSphere::does_intersect(Ray ray) {
     double b = 2 * dot(ray.dir, ray.from - position);
@@ -135,13 +153,13 @@ Ray BeautifulSphere::does_intersect(Ray ray) {
        double t2 = (-b - sqrt(delta)) / 2;
        if (t1 > 0 and t2 > 0) {
            if (t1 > t2) t1 = t2;
-           Ray ret(ray.from + t1*ray.dir, (ray.from + t1*ray.dir - position).normalized(), 0, 0, 0);
+           Ray ret(ray.from + t1*ray.dir, (ray.from + t1*ray.dir - position).normalized());
            return ret;
         //    printf("here\n");
        }
            
    }
-   return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
+   return Ray(Vec3(0,0,0), Vec3(2,0,0));
 }
   
 
@@ -155,14 +173,28 @@ Triangle BeautifulPlane::get_intersection_triangle(Ray ray) {
     return Triangle();
 }
 
+std::pair<int,std::string> BeautifulPlane::name() const{
+    return std::pair<int,std::string>(FIGURE,"BeautifulPlane");
+}
+
+Object* BeautifulPlane::clone(std::vector<std::string> const &arg){
+    assert(arg.size() >= 4);
+    BeautifulPlane* rez = new BeautifulPlane();
+    rez->normal =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
+    rez->d = atof(arg[3].c_str());
+    return rez;
+}
+
+BeautifulPlane::BeautifulPlane(){}
+
 Ray BeautifulPlane::does_intersect(Ray ray) {
     double k = dot(normal, ray.dir);
     if (k == 0)
-        return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
+        return Ray(Vec3(0,0,0), Vec3(2,0,0));
     double t = (this->d - dot(ray.from, normal))/k;
 
     if (t < 0)
-        return Ray(Vec3(0,0,0), Vec3(2,0,0), 0, 0, 0);
-    return Ray(ray.from + (t-1e-8)*ray.dir, normal, 0, 0, 0);
+        return Ray(Vec3(0,0,0), Vec3(2,0,0));
+    return Ray(ray.from + (t-1e-8)*ray.dir, normal);
 }
 

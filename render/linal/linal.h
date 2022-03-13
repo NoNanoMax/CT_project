@@ -37,9 +37,11 @@ public:
     Vec3 from;
     //direction
     Vec3 dir;
-    unsigned x, y;
+    //hz zachem, no nigde nne ispolyzuem
     double intensity;
-    Ray(Vec3 from, Vec3 dir, unsigned x, unsigned y, double intensity);
+    Ray(Vec3 from, Vec3 dir);
+    
+    Ray(Vec3 from, Vec3 dir, double intensity);
 };
 
 class Matr3 {

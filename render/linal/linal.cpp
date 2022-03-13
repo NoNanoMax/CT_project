@@ -72,8 +72,13 @@ double cos(const Vec3& a, const Vec3& b) {
 
 // --------------------------------------------- Ray ---------------------------------------------
 
-Ray::Ray(Vec3 from, Vec3 dir, unsigned x, unsigned y, double intensity):
-     from(from), dir(dir), x(x), y(y), intensity(intensity) { }
+
+Ray::Ray(Vec3 from, Vec3 dir):
+     from(from), dir(dir) { }
+
+Ray::Ray(Vec3 from, Vec3 dir, double intensity):
+     from(from), dir(dir), intensity(intensity) { }
+
 
 // --------------------------------------------- Matr3 ---------------------------------------------
 

@@ -12,7 +12,7 @@
 
 int main() {
     Scene r;
-    r.initialization("input.txt");
+    r.initialization("scene.ass");
     r.render();
     Color** res = r.get_res();
 	
