@@ -1,0 +1,8 @@
+/* gitignore */
+
+run
+.DS_Store
+.vscode
+*.o
+a.out
+
