@@ -26,7 +26,9 @@ Matr3 Camera::calculate_rotate() {
 }
 
 Ray Camera::calculate_ray(unsigned x, unsigned y) {
-    Vec3 point(2 * tan(FOV_X / 2) * (x * 1.0 / X - 0.5), 1, 2 * tan(FOV_Y/2) * (y * 1.0 / Y - 0.5));
+    double alpha = FOV_X * (x * 1.0 / X - 0.5);
+    double beta = FOV_Y * (y * 1.0 / Y - 0.5);
+    Vec3 point(cos(beta) * sin(alpha), cos(beta) * cos(alpha), sin(beta));
     Vec3 screen_point = point + position;
     Vec3 direction(rotate * point);
     return Ray(position, direction.normalized(), x, y);
@@ -36,7 +38,7 @@ Camera::Camera(Vec3 position, Vec3 angles, double FOV_X, int X = WIDTH, int Y = 
     position(position), FOV_X(FOV_X), X(X), Y(Y) {
     for (short i = 0; i < 3; i++) this->angles[i] = angles[i];
     rotate = calculate_rotate();
-    FOV_Y = 2 * atan(tan(FOV_X / 2) * (Y * 1.0 / X));
+    FOV_Y = FOV_X * Y * 1.0 / X;
 }
 
 Camera::Camera() {
