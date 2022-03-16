@@ -1,8 +1,8 @@
 Ambient_light 0.2
-Directed_light 0 2 0 0.4
-Point_light -1 2 4 0.5
+Directed_light 0 2 0 1
 Camera 0 0 1 0 0 0 1.47 2000 1000
-BeautifulSphere 1 10 1 1.8
-BeautifulSphere 5 8 -1 1
-BeautifulSphere 5 8 3 1
+BeautifulSphere -6 10 1 1.8
+BeautifulSphere -2 10 1 1.8
+BeautifulSphere 2 10 1 1.8
+BeautifulSphere 6 10 1 1.8
 BeautifulPlane 0 0 1 -2

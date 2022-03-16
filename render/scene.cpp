@@ -59,7 +59,7 @@ int Camera::width() const{
     return X;
 }
 
-//res Ray[Width][Hight]
+//res Ray[Width * Hight]
 std::vector<Ray> Camera::create_rays() {
     std::vector<Ray> ret;
     for (unsigned x = 0; x < X; x++) {
