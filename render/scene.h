@@ -20,21 +20,48 @@
 #include <stdlib.h>
 
 #include "linal/linal.h"
-#include "material/material.h"
 #include <vector>
 #include "math.h"
 
 
 enum types{CAMERA, LIGHT, FIGURE};
 
+// Шаблонный класс для всех объектов сцены (камера / источники света / фигуры)
 class Object{
 public:
-    Object();
+    Object() { }
     virtual Object* clone(std::vector<std::string> const & arg) = 0;
     virtual std::pair<int, std::string> name() const = 0;
 };
 
-// ------------------------------- figures -------------------------------
+// ------------------------------- Figures -------------------------------
+
+// Умная точка, хранящая точку, нормаль, цвет, материал
+class SmartPoint {
+public:
+    Vec3 point;
+    Vec3 normal;
+    Color color = Color(255, 255, 255);
+    Material material = Material("dielectric");
+    SmartPoint(Vec3 point, Vec3 normal);
+    SmartPoint(Vec3 point, Vec3 normal, Color color, Material material);
+};
+
+class Figure {
+public:
+    // returns point of intersection and normal else dir = (2, 0, 0)
+    virtual Vec3 get_intersection_point(Ray ray) = 0;
+    // возвращает SmartPoint (супер точку) по лучу
+    virtual SmartPoint get_intersection_SmartPoint(Ray ray) = 0;
+};
+
+// ------------------------------- PolygonizedFigures -------------------------------
+/*
+class PolygonizedFigure {
+    std::vector<Triangle> body;
+public:
+    virtual std::vector<Triangle> get_body();
+};
 
 class Triangle {
 public:
@@ -52,15 +79,7 @@ public:
     bool is_empty(); // плохой ли треугольник
 };
 
-class Figure{
-public:
-    // virtual std::vector<Triangle> get_body() = 0;
-    //returns point of intersection and normal else dir = (2, 0, 0)
-    virtual Ray does_intersect(Ray ray) = 0;
-    virtual Triangle get_intersection_triangle(Ray ray) = 0;
-};
-
-class Sphere : public Figure, public Object{
+class Sphere : public Figure, public Object {
     std::vector<Triangle> body;
 public:
     Object* clone(std::vector<std::string> const & arg);
@@ -71,33 +90,35 @@ public:
     //returns point of intersection and normal else dir = (2, 0, 0)
     virtual Ray does_intersect(Ray ray);
 };
+*/
+// ------------------------------- AnaliticFigures -------------------------------
 
 class BeautifulSphere : public Figure , public Object {
-    Vec3 position = Vec3(0,0,0);
+    Vec3 position = Vec3(0, 0, 0);
     double radius = 0;
+    Color color = Color(255, 255, 255);
+    Material material = Material("dielectric");
 public:
-    BeautifulSphere();
+    BeautifulSphere() { }
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
-    void build(Vec3 center, double radius);
-    // std::vector<Triangle> get_body(); //hz zachem eto
-    Triangle get_intersection_triangle(Ray r);
-    //returns point of intersection and normal else dir = (2, 0, 0)
-    virtual Ray does_intersect(Ray ray);
+    //returns point of intersection else valid = false
+    Vec3 get_intersection_point(Ray ray);
+    SmartPoint get_intersection_SmartPoint(Ray ray);
 };
 
 
 class BeautifulPlane : public Figure, public Object {
-    Vec3 normal = Vec3(0,0,1);
+    Vec3 normal = Vec3(0, 0, 1);
     double d = 0;
+    Color color = Color(255, 255, 255);
+    Material material = Material("dielectric");
 public:
-    BeautifulPlane();
+    BeautifulPlane() { }
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
-    void build(Vec3 normal, double d);
-    virtual Ray does_intersect(Ray r);
-    Triangle get_intersection_triangle(Ray r);
-    
+    Vec3 get_intersection_point(Ray ray);
+    SmartPoint get_intersection_SmartPoint(Ray ray);
 };
 // ------------------------------- lights -------------------------------
 
@@ -122,7 +143,7 @@ public:
 
 class Point_light: public Light_source, public Object {
 private:    
-    Vec3 position = Vec3(0,0,0);
+    Vec3 position = Vec3(0, 0, 0);
     double intensity = 0;
 public:
     Point_light();
@@ -135,7 +156,7 @@ public:
 
 class Directed_light: public Light_source, public Object {
 private:
-    Vec3 direction = Vec3(0,0,0);;
+    Vec3 direction = Vec3(0, 0, 0);;
     double intensity = 0;
 public:
     Directed_light();
@@ -164,7 +185,7 @@ public:
     std::pair<int,std::string> name() const;
     Camera(); // пустой конструктор (источник в начале координат, углы нулевые, расстояние, ширина, высота единицы)
     Camera(Vec3 position, Vec3 angels, double FOV_X, int X, int Y);
-    std::vector<std::vector<Ray>> create_rays(); // генерация лучей
+    std::vector<Ray> create_rays(); // генерация лучей
 };
 
 // ------------------------------- scene -------------------------------
@@ -183,14 +204,14 @@ public:
     const Camera* get_camera() const;
     Color** get_res();
 
-    //fills scene with objects
+    // fills scene with objects
     void initialization(const char * input);
 
-    //calculates everything
+    // calculates everything
     void render();
     
-    //inner methods
-    Color trace_ray(Ray ray);
+    // inner methods
+    void trace_ray(Ray ray);
     double full_intensity_in_point(Vec3 point, Vec3 normal);
-    Ray get_first_intersection(Ray ray);
+    SmartPoint get_first_SmartPoint(Ray ray);
 };

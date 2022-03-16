@@ -31,24 +31,24 @@ Material::Material(double t_reflection, double t_refraction, double t_diffusion,
     n(n), t_reflection(t_reflection), t_refraction(t_reflection), t_diffusion(t_reflection) 
 { }
 
-void Color::make(std::string name) {
-    if (name == "white") r = 255, g = 255, b = 255;
+void Color::colorize(std::string name) {
+    if (name == "white") r = 1, g = 1, b = 1;
     if (name == "black") r = 0, g = 0, b = 0;
-    if (name == "red") r = 255, g = 0, b = 0;
-    if (name == "green") r = 0, g = 255, b = 0;
-    if (name == "blue") r = 0, g = 0, b = 255;
+    if (name == "red") r = 1, g = 0, b = 0;
+    if (name == "green") r = 0, g = 1, b = 0;
+    if (name == "blue") r = 0, g = 0, b = 1;
 }
 
+// ненормированная интенсивность для каждого цвета (float (не от 0 до 255))
 Color::Color() {
-    //make("black");
     r = 0, g = 0, b = 0;
 }
 
 Color::Color(std::string name) {
-    make(name);
+    colorize(name);
 }
 
-Color::Color(short r, short g, short b):
+Color::Color(double r, double g, double b):
     r(r), g(g), b(b) 
 { }
 

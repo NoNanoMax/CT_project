@@ -21,7 +21,7 @@ int main() {
     
    	for (int j = height - 1; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
-            printf("%03d %03d %03d ", res[i][j].r, res[i][j].g, res[i][j].b);
+            printf("%03d %03d %03d ", int(res[i][j].r), int(res[i][j].g), int(res[i][j].b));
         }
    	}
 	std::cout << "\n";

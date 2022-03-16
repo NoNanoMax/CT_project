@@ -11,7 +11,7 @@
 #include <vector>
 
 // ------------------------------- Triangle -------------------------------
-
+/*
 Triangle::Triangle() {
     Vec3 v1(0, 0, 0), v2(0, 0, 0), v3(0, 0, 0);
     Vec3 n1(0, 0, 0), n2(0, 0, 0), n3(0, 0, 0);
@@ -39,9 +39,9 @@ Triangle::Triangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 n1, Vec3 n2, Vec3 n3):
 
 bool Triangle::check_intersection(Ray ray) {
     if (abs(dot(N, ray.dir)) < 1e-10) return false; // проверка на параллельность
-    double t = - (dot(N, ray.from) + D) / dot(N, ray.dir);
+    double t = - (dot(N, ray.pos) + D) / dot(N, ray.dir);
     if (t < 0) return false; // смотрит в другую сторону
-    Vec3 P = ray.from + ray.dir * t; // точка пересечения
+    Vec3 P = ray.pos + ray.dir * t; // точка пересечения
     double u = dot(P, U) - u0; // барицентрические
     double v = dot(P, V) - v0; // координаты
     if (0 <= u && u <= 1 && 0 <= v && v <= 1 && u + v <= 1) {
@@ -52,8 +52,8 @@ bool Triangle::check_intersection(Ray ray) {
 }
 
 Vec3 Triangle::get_intersection_point(Ray ray) {
-    double t = - (dot(N, ray.from) + D) / dot(N, ray.dir);
-    return ray.from + ray.dir * t;
+    double t = - (dot(N, ray.pos) + D) / dot(N, ray.dir);
+    return ray.pos + ray.dir * t;
 }
 
 Vec3 Triangle::get_normal(Vec3 P) {
@@ -62,11 +62,11 @@ Vec3 Triangle::get_normal(Vec3 P) {
     double w = 1 - u - v;
     return (n2 * u + n3 * v + n1 * w).normalized();
 }
-
-// ------------------------------- Sphere -------------------------------
+*/
+// ------------------------------- PolygonizedFigures -------------------------------
 
 //Sphere::Sphere() { }
-
+/*
 void Sphere::build(Vec3 center, double radius, unsigned iterations) {
     body.push_back(Triangle(center + Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1)));
     body.push_back(Triangle(center + Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, -1)));
@@ -98,8 +98,8 @@ Triangle Sphere::get_intersection_triangle(Ray ray) {
     Triangle ret;
     for (std::vector<Triangle>::iterator it = body.begin(); it != body.end(); it++) {
         if (it->check_intersection(ray)) {
-            if ((it->get_intersection_point(ray) - ray.from).abs() < min) {
-                min = (it->get_intersection_point(ray) - ray.from).abs();
+            if ((it->get_intersection_point(ray) - ray.pos).abs() < min) {
+                min = (it->get_intersection_point(ray) - ray.pos).abs();
                 ret = *it;
             }
         }
@@ -120,13 +120,21 @@ Ray Sphere::does_intersect(Ray ray) {
 std::pair<int,std::string> Sphere::name() const{
     return std::pair<int,std::string>(FIGURE, "Sphere");
 }
+*/
 
-    
-void BeautifulSphere::build(Vec3 center, double radius) {
-    position = center; this->radius = radius;
-}
+// ------------------------------- AnaliticFigures -------------------------------
 
-Object* BeautifulSphere::clone(std::vector<std::string> const &arg){
+SmartPoint::SmartPoint(Vec3 point, Vec3 normal):
+    point(point), normal(normal)
+{ }
+
+SmartPoint::SmartPoint(Vec3 point, Vec3 normal, Color color, Material material):
+    point(point), normal(normal), color(color), material(material)
+{ }
+
+// ------------------------------- BeautifulSphere -------------------------------
+
+Object* BeautifulSphere::clone(std::vector<std::string> const &arg) {
     assert(arg.size() >= 4);
     BeautifulSphere* rez = new BeautifulSphere();
     rez->position =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
@@ -135,49 +143,37 @@ Object* BeautifulSphere::clone(std::vector<std::string> const &arg){
 }
 
 std::pair<int,std::string> BeautifulSphere::name() const{
-    return std::pair<int,std::string>(FIGURE,"BeautifulSphere");
+    return std::pair<int,std::string>(FIGURE, "BeautifulSphere");
 }
 
-Triangle BeautifulSphere::get_intersection_triangle(Ray ray) {
-    return Triangle();
-}
-
-BeautifulSphere::BeautifulSphere(){}
-
-Ray BeautifulSphere::does_intersect(Ray ray) {
-    double b = 2 * dot(ray.dir, ray.from - position);
-    double c = dot(ray.from - position, ray.from - position) - radius*radius;
-    double delta = b *b - 4 * c;
+Vec3 BeautifulSphere::get_intersection_point(Ray ray) {
+    double b = 2 * dot(ray.dir, ray.pos - position);
+    double c = dot(ray.pos - position, ray.pos - position) - radius * radius;
+    double delta = b * b - 4 * c; // детерминант
    if (delta > 0) {
-       double t1 = (-b + sqrt(delta)) / 2;
-       double t2 = (-b - sqrt(delta)) / 2;
+       double t1 = (- b + sqrt(delta)) / 2;
+       double t2 = (- b - sqrt(delta)) / 2;
        if (t1 > 0 and t2 > 0) {
            if (t1 > t2) t1 = t2;
-           Ray ret(ray.from + t1*ray.dir, (ray.from + t1*ray.dir - position).normalized());
-           return ret;
-        //    printf("here\n");
+           return ray.pos + t1 * ray.dir;
        }
-           
    }
-   return Ray(Vec3(0,0,0), Vec3(2,0,0));
+   return Vec3(0, 0, 0, false);
+}
+
+SmartPoint BeautifulSphere::get_intersection_SmartPoint(Ray ray) {
+    Vec3 point = get_intersection_point(ray);
+    Vec3 normal = point - this->position;
+    return SmartPoint(point, normal, color, material);
 }
   
+// ------------------------------- BeautifulPlane -------------------------------
 
-//plane comtains (0, 0, normal.from.z)
-void BeautifulPlane::build(Vec3 normal, double d) {
-    this->normal = normal;
-    this->d = d;
+std::pair<int,std::string> BeautifulPlane::name() const {
+    return std::pair<int,std::string>(FIGURE, "BeautifulPlane");
 }
 
-Triangle BeautifulPlane::get_intersection_triangle(Ray ray) {
-    return Triangle();
-}
-
-std::pair<int,std::string> BeautifulPlane::name() const{
-    return std::pair<int,std::string>(FIGURE,"BeautifulPlane");
-}
-
-Object* BeautifulPlane::clone(std::vector<std::string> const &arg){
+Object* BeautifulPlane::clone(std::vector<std::string> const &arg) {
     assert(arg.size() >= 4);
     BeautifulPlane* rez = new BeautifulPlane();
     rez->normal =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
@@ -185,16 +181,17 @@ Object* BeautifulPlane::clone(std::vector<std::string> const &arg){
     return rez;
 }
 
-BeautifulPlane::BeautifulPlane(){}
-
-Ray BeautifulPlane::does_intersect(Ray ray) {
+Vec3 BeautifulPlane::get_intersection_point(Ray ray) {
     double k = dot(normal, ray.dir);
-    if (k == 0)
-        return Ray(Vec3(0,0,0), Vec3(2,0,0));
-    double t = (this->d - dot(ray.from, normal))/k;
+    if (k == 0) return Vec3(0, 0, 0, false); // параллельность
+    double t = (this->d - dot(ray.pos, normal)) / k;
 
-    if (t < 0)
-        return Ray(Vec3(0,0,0), Vec3(2,0,0));
-    return Ray(ray.from + (t-1e-8)*ray.dir, normal);
+    if (t < 0) return Vec3(0, 0, 0, false); // смотрит в другую сторону
+    return ray.pos + (t - 1e-8) * ray.dir;
 }
 
+SmartPoint BeautifulPlane::get_intersection_SmartPoint(Ray ray) {
+    Vec3 point = get_intersection_point(ray);
+    Vec3 normal = this->normal;
+    return SmartPoint(point, normal, color, material);
+}

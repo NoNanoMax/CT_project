@@ -11,11 +11,9 @@
 
 // --------------------------------------------- Vec3 ---------------------------------------------
 
-Vec3::Vec3() {
-    x = 0, y = 0, z = 0;
-}
-
 Vec3::Vec3(double x, double y, double z): x(x), y(y), z(z) { };
+
+Vec3::Vec3(double x, double y, double z, bool valid): x(x), y(y), z(z), valid(valid) { };
 
 double Vec3::abs() const {
     return sqrt(x * x + y * y + z * z);
@@ -73,11 +71,14 @@ double cos(const Vec3& a, const Vec3& b) {
 // --------------------------------------------- Ray ---------------------------------------------
 
 
-Ray::Ray(Vec3 from, Vec3 dir):
-     from(from), dir(dir) { }
+Ray::Ray(Vec3 pos, Vec3 dir):
+     pos(pos), dir(dir) { }
 
-Ray::Ray(Vec3 from, Vec3 dir, double intensity):
-     from(from), dir(dir), intensity(intensity) { }
+Ray::Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y):
+     pos(pos), dir(dir), x(x), y(y) { }
+
+Ray::Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y, Color color):
+     pos(pos), dir(dir), x(x), y(y), color(color) { }
 
 
 // --------------------------------------------- Matr3 ---------------------------------------------

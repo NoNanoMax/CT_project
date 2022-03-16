@@ -1,3 +1,4 @@
+/*
 #include "linal.cpp"
 
 //returns -1 or t: r0 + a*t lying in triangle
@@ -27,4 +28,4 @@ double intersection(Vec3 pos, Vec3 dir, Vec3 v0, Vec3 v1, Vec3 v2) {
     }
     return dot(e2, qvec) * inv_det;
  
-}
+}*/

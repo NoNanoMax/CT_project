@@ -8,8 +8,7 @@
 
 #include <string>
 
-// типы материалов "dielectric", "metall", "glass"
-
+// типы материалов "dielectric", "metall", "glASS"
 class Material {
 public:
     double t_reflection, t_refraction, t_diffusion;
@@ -20,11 +19,11 @@ public:
 
 class Color {
 public:
-    short r, g, b;
+    double r, g, b;
     Color();
     Color(std::string name);
-    Color(short r, short g, short b);
-    void make(std::string name);
+    Color(double r, double g, double b);
+    void colorize(std::string name);
 };
 
 
