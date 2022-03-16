@@ -192,7 +192,7 @@ double Scene::full_intensity_in_point(Vec3 point, Vec3 normal) {
     for(std::vector<Light_source*>::iterator it = lights.begin(); it != lights.end(); it++) {
         Ray target_ray = Ray(point, ((*it)->get_position(point) - point).normalized());
         SmartPoint res = get_first_SmartPoint(target_ray);
-        if (!res.point.valid)
+        if (!res.point.valid || (((*it)->get_position(point) - point).abs() < (res.point - point).abs()))
             ret += (*it)->intensity_in_point(point, normal);
     }
     return ret;
@@ -216,8 +216,9 @@ void Scene::trace_ray(Ray ray) {
         if (r > 255) r = 255;
         if (g > 255) g = 255;
         if (b > 255) b = 255;
-        res[ray.x][ray.y] = Color(r, g, b);
+        
     }
+    res[ray.x][ray.y] = Color(r, g, b);
 }
 
 void Scene::render() {

@@ -176,7 +176,7 @@ std::pair<int,std::string> BeautifulPlane::name() const {
 Object* BeautifulPlane::clone(std::vector<std::string> const &arg) {
     assert(arg.size() >= 4);
     BeautifulPlane* rez = new BeautifulPlane();
-    rez->normal =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
+    rez->normal =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str())).normalized();
     rez->d = atof(arg[3].c_str());
     return rez;
 }
