@@ -26,19 +26,30 @@ Matr3 Camera::calculate_rotate() {
 }
 
 Ray Camera::calculate_ray(unsigned x, unsigned y) {
-    double alpha = FOV_X * (x * 1.0 / X - 0.5);
-    double beta = FOV_Y * (y * 1.0 / Y - 0.5);
-    Vec3 point(cos(beta) * sin(alpha), cos(beta) * cos(alpha), sin(beta));
-    Vec3 screen_point = point + position;
-    Vec3 direction(rotate * point);
-    return Ray(position, direction.normalized(), x, y);
+    if (i_am_fish) {
+        double alpha = FOV_X * (x * 1.0 / X - 0.5);
+        double beta = FOV_Y * (y * 1.0 / Y - 0.5);
+        Vec3 point(cos(beta) * sin(alpha), cos(beta) * cos(alpha), sin(beta));
+        Vec3 screen_point = point + position;
+        Vec3 direction(rotate * point);
+        return Ray(position, direction.normalized(), x, y);
+    } else {
+        Vec3 point(2 * tan(FOV_X / 2) * (x * 1.0 / X - 0.5), 1, 2 * tan(FOV_Y / 2) * (y * 1.0 / Y - 0.5));
+        Vec3 screen_point = point + position;
+        Vec3 direction(rotate * point);
+        return Ray(position, direction.normalized(), x, y);
+    }
 }
 
-Camera::Camera(Vec3 position, Vec3 angles, double FOV_X, int X = WIDTH, int Y = HEIGHT):
-    position(position), FOV_X(FOV_X), X(X), Y(Y) {
+Camera::Camera(Vec3 position, Vec3 angles, double FOV_X, int X = WIDTH, int Y = HEIGHT, bool i_am_fish):
+    position(position), FOV_X(FOV_X), X(X), Y(Y), i_am_fish(i_am_fish) {
     for (short i = 0; i < 3; i++) this->angles[i] = angles[i];
     rotate = calculate_rotate();
-    FOV_Y = FOV_X * Y * 1.0 / X;
+    if (i_am_fish) {
+        FOV_Y = FOV_X * Y * 1.0 / X;
+    } else {
+        FOV_Y = 2 * atan(tan(FOV_X / 2) * (Y * 1.0 / X));
+    }
 }
 
 Camera::Camera() {
@@ -47,7 +58,11 @@ Camera::Camera() {
     X = WIDTH;
     Y = HEIGHT;
     FOV_X = 0.7;
-    FOV_Y = 2 * atan(tan(FOV_X / 2)* (Y / X));
+    if (i_am_fish) {
+        FOV_Y = FOV_X * Y * 1.0 / X;
+    } else {
+        FOV_Y = 2 * atan(tan(FOV_X / 2) * (Y * 1.0 / X));
+    }
     rotate = calculate_rotate();
 }
 
@@ -72,11 +87,11 @@ std::vector<Ray> Camera::create_rays() {
 
 Object* Camera::clone(std::vector<std::string> const & arg){
    // Vec3 position, Vec3 angles, double distance, double width, double height
-    assert(arg.size() >= 9);
+    assert(arg.size() >= 10);
     Camera* rez = new Camera(
         Vec3(atof(arg[0].c_str()), atof(arg[1].c_str()), atof(arg[2].c_str())),
         Vec3(atof(arg[3].c_str()), atof(arg[4].c_str()), atof(arg[5].c_str())),
-        atof(arg[6].c_str()), atof(arg[7].c_str()),  atof(arg[8].c_str())
+        atof(arg[6].c_str()), atoi(arg[7].c_str()),  atoi(arg[8].c_str()), atoi(arg[9].c_str())
     );
     return rez;
 }
@@ -204,14 +219,13 @@ void Scene::trace_ray(Ray ray) {
 
     SmartPoint intersetion_SmartPoint = get_first_SmartPoint(ray);
     if (intersetion_SmartPoint.point.valid) {
-
-
-        double light = full_intensity_in_point(intersetion_SmartPoint.point, intersetion_SmartPoint.normal) * 255;
+        Color color = intersetion_SmartPoint.color;
+        double light = full_intensity_in_point(intersetion_SmartPoint.point, intersetion_SmartPoint.normal);
         // printf("%lf %lf %lf\n", ray.pos.x, ray.pos.y, ray.pos.z);
 
-        r = light;//abs(dot(intersetion_point.dir, Vec3(1,0,0)));
-        g = light;//abs(dot(intersetion_point.dir, Vec3(0,1,0)));
-        b = light;//abs(dot(intersetion_point.dir, Vec3(0,0,1)));
+        r = light * color.r;
+        g = light * color.g;
+        b = light * color.b;
 
         if (r > 255) r = 255;
         if (g > 255) g = 255;

@@ -32,11 +32,15 @@ Material::Material(double t_reflection, double t_refraction, double t_diffusion,
 { }
 
 void Color::colorize(std::string name) {
-    if (name == "white") r = 1, g = 1, b = 1;
+    if (name == "white") r = 255, g = 255, b = 255;
     if (name == "black") r = 0, g = 0, b = 0;
-    if (name == "red") r = 1, g = 0, b = 0;
-    if (name == "green") r = 0, g = 1, b = 0;
-    if (name == "blue") r = 0, g = 0, b = 1;
+    if (name == "red") r = 255, g = 0, b = 0;
+    if (name == "green") r = 0, g = 255, b = 0;
+    if (name == "blue") r = 0, g = 0, b = 255;
+    if (name == "yellow") r = 255, g = 255, b = 0;
+    if (name == "grey") r = 96, g = 96, b = 96;
+    if (name == "deep_purple") r = 102, g = 0, b = 102;
+    if (name == "orange") r = 255, g = 128, b = 0;
 }
 
 // ненормированная интенсивность для каждого цвета (float (не от 0 до 255))

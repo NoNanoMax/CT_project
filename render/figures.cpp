@@ -139,6 +139,7 @@ Object* BeautifulSphere::clone(std::vector<std::string> const &arg) {
     BeautifulSphere* rez = new BeautifulSphere();
     rez->position =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
     rez->radius = atof(arg[3].c_str());
+    if (arg.size() >= 5) rez->color = Color(arg[4]);
     return rez;
 }
 
@@ -178,6 +179,7 @@ Object* BeautifulPlane::clone(std::vector<std::string> const &arg) {
     BeautifulPlane* rez = new BeautifulPlane();
     rez->normal =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str())).normalized();
     rez->d = atof(arg[3].c_str());
+    if (arg.size() >= 5) rez->color = Color(arg[4]);
     return rez;
 }
 

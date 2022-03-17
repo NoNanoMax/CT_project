@@ -120,6 +120,7 @@ public:
     Vec3 get_intersection_point(Ray ray);
     SmartPoint get_intersection_SmartPoint(Ray ray);
 };
+
 // ------------------------------- lights -------------------------------
 
 // -- Абстрактный класс источников света --
@@ -176,6 +177,7 @@ class Camera: public Object {
     Matr3 rotate; // матрица поворота
     double FOV_X, FOV_Y; // ширина поля зрения вдоль WIDTH: 1,57 - 90 Градусов
     int X, Y; // ширина и высота экрана
+    bool i_am_fish = 0;
     Matr3 calculate_rotate();
     Ray calculate_ray(unsigned x, unsigned y);
 public:
@@ -184,7 +186,7 @@ public:
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
     Camera(); // пустой конструктор (источник в начале координат, углы нулевые, расстояние, ширина, высота единицы)
-    Camera(Vec3 position, Vec3 angels, double FOV_X, int X, int Y);
+    Camera(Vec3 position, Vec3 angels, double FOV_X, int X, int Y, bool i_am_fish = 0);
     std::vector<Ray> create_rays(); // генерация лучей
 };
 
