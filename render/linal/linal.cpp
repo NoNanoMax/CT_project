@@ -13,8 +13,6 @@
 
 Vec3::Vec3(double x, double y, double z): x(x), y(y), z(z) { };
 
-Vec3::Vec3(double x, double y, double z, bool valid): x(x), y(y), z(z), valid(valid) { };
-
 double Vec3::abs() const {
     return sqrt(x * x + y * y + z * z);
 }

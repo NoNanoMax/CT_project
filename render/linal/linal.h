@@ -12,10 +12,8 @@
 class Vec3 {
 public:
     double x = 0, y = 0, z = 0;
-    bool valid = true;
     Vec3() { };
     Vec3(double x, double y, double z);
-    Vec3(double x, double y, double z, bool valid);
     double abs() const;
     bool is_null() const;
     bool any_null() const;

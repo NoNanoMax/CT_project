@@ -126,7 +126,6 @@ Scene::Scene(std::vector<Figure*> figures, std::vector<Light_source*> lights, Ca
     figures(figures), lights(lights), camera(camera) {
 }
 
-
 std::vector<std::string> split(std::string const &s) {
     std::stringstream inp(s);
     std::vector<std::string> ret;
@@ -142,7 +141,7 @@ std::vector<std::string> split(std::string const &s) {
 //build figures and lights pos input, deafult "input.txt"
 void Scene::initialization(const char * input) {
     std::map<std::string, std::pair<int,Object*>> factory;
-    std::vector<Object*> zigotes ={
+    std::vector<Object*> zigotes = {
         new Camera(), new Ambient_light(),
         new Point_light(), new Directed_light(),
         new BeautifulPlane(), new BeautifulSphere()
@@ -166,7 +165,7 @@ void Scene::initialization(const char * input) {
         auto it = factory.find(name);
         if (it == factory.end()) continue;
         Object * ptr = (it->second).second->clone(args);
-        switch ((it->second).first){
+        switch ((it->second).first) {
             case CAMERA:
             if(camera) delete camera;
                 camera = dynamic_cast<Camera*>(ptr);
@@ -183,19 +182,18 @@ void Scene::initialization(const char * input) {
     }
 }
 
-
 //returns normal at intesection point else vector direction equals (2, 0, 0)
 SmartPoint Scene::get_first_SmartPoint(Ray ray) {
-    SmartPoint intersected(Vec3(0, 0, 0, false), Vec3(0, 0, 0, false)); // точка пересечения
+    SmartPoint intersected(false); // точка пересечения
 
     if (ray.dir.x == 0 and ray.dir.y == 0 and ray.dir.z == 0) return intersected; //костыль для ambient light
 
     double min = 1e5; // минимум расстояния до пересеченной фигуры
     for (std::vector<Figure*>::iterator it = figures.begin(); it != figures.end(); it++) {
-        Vec3 point = (*it)->get_intersection_point(ray); 
-        if (point.valid && (point - ray.pos).abs() < min) {
-            min = (point - ray.pos).abs();
-            intersected = (*it)->get_intersection_SmartPoint(ray);
+        SmartPoint point = (*it)->get_intersection_SmartPoint(ray);
+        if (point.valid && (point.point - ray.pos).abs() < min) {
+            min = (point.point - ray.pos).abs();
+            intersected = point;
         }
     }
     //if no intersection returns "negative" result
@@ -207,7 +205,7 @@ double Scene::full_intensity_in_point(Vec3 point, Vec3 normal) {
     for(std::vector<Light_source*>::iterator it = lights.begin(); it != lights.end(); it++) {
         Ray target_ray = Ray(point, ((*it)->get_position(point) - point).normalized());
         SmartPoint res = get_first_SmartPoint(target_ray);
-        if (!res.point.valid || (((*it)->get_position(point) - point).abs() < (res.point - point).abs()))
+        if (!res.valid || (((*it)->get_position(point) - point).abs() < (res.point - point).abs()))
             ret += (*it)->intensity_in_point(point, normal);
     }
     return ret;
@@ -218,7 +216,7 @@ void Scene::trace_ray(Ray ray) {
     double r = 30; double b = 255; double g = 144; //set background color
 
     SmartPoint intersetion_SmartPoint = get_first_SmartPoint(ray);
-    if (intersetion_SmartPoint.point.valid) {
+    if (intersetion_SmartPoint.valid) {
         Color color = intersetion_SmartPoint.color;
         double light = full_intensity_in_point(intersetion_SmartPoint.point, intersetion_SmartPoint.normal);
         // printf("%lf %lf %lf\n", ray.pos.x, ray.pos.y, ray.pos.z);

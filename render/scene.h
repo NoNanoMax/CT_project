@@ -39,29 +39,23 @@ public:
 // Умная точка, хранящая точку, нормаль, цвет, материал
 class SmartPoint {
 public:
-    Vec3 point;
-    Vec3 normal;
+    Vec3 point = Vec3(0, 0, 0);
+    Vec3 normal = Vec3(0, 0, 0);
+    bool valid = true;
     Color color = Color(255, 255, 255);
     Material material = Material("dielectric");
+    SmartPoint(bool valid);
     SmartPoint(Vec3 point, Vec3 normal);
-    SmartPoint(Vec3 point, Vec3 normal, Color color, Material material);
+    SmartPoint(Vec3 point, Vec3 normal, Color color, Material material, bool valid = false);
 };
 
 class Figure {
 public:
-    // returns point of intersection and normal else dir = (2, 0, 0)
-    virtual Vec3 get_intersection_point(Ray ray) = 0;
     // возвращает SmartPoint (супер точку) по лучу
     virtual SmartPoint get_intersection_SmartPoint(Ray ray) = 0;
 };
-
-// ------------------------------- PolygonizedFigures -------------------------------
 /*
-class PolygonizedFigure {
-    std::vector<Triangle> body;
-public:
-    virtual std::vector<Triangle> get_body();
-};
+// ------------------------------- PolygonizedFigures -------------------------------
 
 class Triangle {
 public:
@@ -79,21 +73,24 @@ public:
     bool is_empty(); // плохой ли треугольник
 };
 
-class Sphere : public Figure, public Object {
-    std::vector<Triangle> body;
+class PolygonizedFigure {
+    std::vector<Triangle>* body;
 public:
+    PolygonizedFigure();
+    ~PolygonizedFigure();
+    SmartPoint get_intersection_SmartPoint(Ray r);
+};
+
+class Sphere : public Figure, public PolygonizedFigure, public Object {
+public:
+    Sphere();
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
-    void build(Vec3 center, double radius, unsigned iterations = 2);
-    std::vector<Triangle> get_body();
-    Triangle get_intersection_triangle(Ray r);
-    //returns point of intersection and normal else dir = (2, 0, 0)
-    virtual Ray does_intersect(Ray ray);
 };
 */
 // ------------------------------- AnaliticFigures -------------------------------
 
-class BeautifulSphere : public Figure , public Object {
+class BeautifulSphere : public Figure, public Object {
     Vec3 position = Vec3(0, 0, 0);
     double radius = 0;
     Color color = Color(255, 255, 255);
@@ -103,7 +100,6 @@ public:
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
     //returns point of intersection else valid = false
-    Vec3 get_intersection_point(Ray ray);
     SmartPoint get_intersection_SmartPoint(Ray ray);
 };
 
@@ -117,7 +113,6 @@ public:
     BeautifulPlane() { }
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
-    Vec3 get_intersection_point(Ray ray);
     SmartPoint get_intersection_SmartPoint(Ray ray);
 };
 

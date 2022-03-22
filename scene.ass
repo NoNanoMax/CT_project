@@ -1,12 +1,7 @@
-Point_light 0 6 10 1
-Point_light 0 1 10 1
-Ambient_light 0.2
-Camera 0 0 1 0 0 0 3 1000 1000 1
-BeautifulSphere 0 8 2 5 white
-BeautifulSphere 0 3 1.2 0.7 red
-BeautifulSphere 0 4 6 2 blue
-BeautifulSphere 3 4 6 2 blue
-BeautifulSphere -3 4 6 2 blue
-BeautifulSphere -4 4 3 2 blue
-BeautifulSphere 4 4 3 2 blue
-BeautifulPlane 0 0 1 -1 grey
+Point_light 0 -3 10 1
+Ambient_light 0.3
+Camera 0 -3 1 0 0 0 2 1000 1000 1
+BeautifulSphere -6 8 2 3
+BeautifulSphere 0 8 2 3
+BeautifulSphere 6 8 2 3
+BeautifulPlane 0 0 1 -2
