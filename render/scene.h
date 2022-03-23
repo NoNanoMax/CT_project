@@ -46,7 +46,7 @@ public:
     Material material = Material("dielectric");
     SmartPoint(bool valid);
     SmartPoint(Vec3 point, Vec3 normal);
-    SmartPoint(Vec3 point, Vec3 normal, Color color, Material material, bool valid = false);
+    SmartPoint(Vec3 point, Vec3 normal, Color color, Material material, bool valid = true);
 };
 
 class Figure {
@@ -54,7 +54,7 @@ public:
     // возвращает SmartPoint (супер точку) по лучу
     virtual SmartPoint get_intersection_SmartPoint(Ray ray) = 0;
 };
-/*
+
 // ------------------------------- PolygonizedFigures -------------------------------
 
 class Triangle {
@@ -65,29 +65,25 @@ public:
     double D; // коэффициент в уравнении плоскости
     Vec3 U, V; // вспомогательные вектора для рассчёта пересечений
     double u0, v0; // вспомогательные величины для рассчёта пересечений
-    Triangle();
+    bool valid = true;
+    Triangle(bool valid = true);
 	Triangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 n1, Vec3 n2, Vec3 n3);
 	bool check_intersection(Ray r);
     Vec3 get_intersection_point(Ray r);
     Vec3 get_normal(Vec3 point);
-    bool is_empty(); // плохой ли треугольник
 };
 
-class PolygonizedFigure {
-    std::vector<Triangle>* body;
+class Sphere : public Figure, public Object {
 public:
-    PolygonizedFigure();
-    ~PolygonizedFigure();
+    Color color = Color(255, 255, 255);;
+    Material material = Material("dielectric");
+    std::vector<Triangle> body;
+    Sphere() { }
+    Object* clone(std::vector<std::string> const & arg);
+    std::pair<int,std::string> name() const;
     SmartPoint get_intersection_SmartPoint(Ray r);
 };
 
-class Sphere : public Figure, public PolygonizedFigure, public Object {
-public:
-    Sphere();
-    Object* clone(std::vector<std::string> const & arg);
-    std::pair<int,std::string> name() const;
-};
-*/
 // ------------------------------- AnaliticFigures -------------------------------
 
 class BeautifulSphere : public Figure, public Object {
@@ -119,10 +115,12 @@ public:
 // ------------------------------- lights -------------------------------
 
 // -- Абстрактный класс источников света --
+
+SmartPoint get_first_SmartPoint(Ray r, std::vector<Figure*>* figures_pointer);
+
 class Light_source {
 public:
-    virtual double intensity_in_point(Vec3 point, Vec3 normal) = 0;
-    virtual Vec3 get_position(Vec3 point) = 0;
+    virtual double intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer) = 0;
 };
 
 class Ambient_light: public Light_source, public Object {
@@ -132,9 +130,7 @@ public:
     Ambient_light();
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
-    void build(double intensity);
-    Vec3 get_position(Vec3 point);
-    double intensity_in_point(Vec3 point, Vec3 normal);
+    double intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer);
 };
 
 class Point_light: public Light_source, public Object {
@@ -145,9 +141,7 @@ public:
     Point_light();
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
-    void build(Vec3 position, double intensity);
-    Vec3 get_position(Vec3 point);
-    double intensity_in_point(Vec3 camera, Vec3 normal);
+    double intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer);
 };
 
 class Directed_light: public Light_source, public Object {
@@ -158,9 +152,7 @@ public:
     Directed_light();
     Object* clone(std::vector<std::string> const & arg);
     std::pair<int,std::string> name() const;
-    void build(Vec3 direction, double intensity);
-    Vec3 get_position(Vec3 point);
-    double intensity_in_point(Vec3 camera, Vec3 normal);
+    double intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer);
 };
 
 // ------------------------------- camera -------------------------------
@@ -209,6 +201,6 @@ public:
     
     // inner methods
     void trace_ray(Ray ray);
-    double full_intensity_in_point(Vec3 point, Vec3 normal);
+    double full_intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer);
     SmartPoint get_first_SmartPoint(Ray ray);
 };

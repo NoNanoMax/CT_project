@@ -138,13 +138,14 @@ std::vector<std::string> split(std::string const &s) {
     return ret;
 }
 
-//build figures and lights pos input, deafult "input.txt"
+// build figures and lights pos input, deafult "input.txt"
 void Scene::initialization(const char * input) {
     std::map<std::string, std::pair<int,Object*>> factory;
     std::vector<Object*> zigotes = {
         new Camera(), new Ambient_light(),
         new Point_light(), new Directed_light(),
-        new BeautifulPlane(), new BeautifulSphere()
+        new BeautifulPlane(), new BeautifulSphere(),
+        new Sphere()
     };
 
     for (auto obj : zigotes) {
@@ -182,11 +183,9 @@ void Scene::initialization(const char * input) {
     }
 }
 
-//returns normal at intesection point else vector direction equals (2, 0, 0)
+// returns intersected SmartPoint else valid = false
 SmartPoint Scene::get_first_SmartPoint(Ray ray) {
     SmartPoint intersected(false); // точка пересечения
-
-    if (ray.dir.x == 0 and ray.dir.y == 0 and ray.dir.z == 0) return intersected; //костыль для ambient light
 
     double min = 1e5; // минимум расстояния до пересеченной фигуры
     for (std::vector<Figure*>::iterator it = figures.begin(); it != figures.end(); it++) {
@@ -200,25 +199,22 @@ SmartPoint Scene::get_first_SmartPoint(Ray ray) {
     return intersected;
 }
 
-double Scene::full_intensity_in_point(Vec3 point, Vec3 normal) {
+double Scene::full_intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer) {
     double ret = 0;
     for(std::vector<Light_source*>::iterator it = lights.begin(); it != lights.end(); it++) {
-        Ray target_ray = Ray(point, ((*it)->get_position(point) - point).normalized());
-        SmartPoint res = get_first_SmartPoint(target_ray);
-        if (!res.valid || (((*it)->get_position(point) - point).abs() < (res.point - point).abs()))
-            ret += (*it)->intensity_in_point(point, normal);
+        ret += (*it)->intensity_in_point(smartpoint, figures_pointer);
     }
     return ret;
 }
-
 
 void Scene::trace_ray(Ray ray) {
     double r = 30; double b = 255; double g = 144; //set background color
 
     SmartPoint intersetion_SmartPoint = get_first_SmartPoint(ray);
     if (intersetion_SmartPoint.valid) {
+
         Color color = intersetion_SmartPoint.color;
-        double light = full_intensity_in_point(intersetion_SmartPoint.point, intersetion_SmartPoint.normal);
+        double light = full_intensity_in_point(intersetion_SmartPoint, &figures);
         // printf("%lf %lf %lf\n", ray.pos.x, ray.pos.y, ray.pos.z);
 
         r = light * color.r;
@@ -245,6 +241,3 @@ void Scene::render() {
         trace_ray(*it);
     }
 }
-
-
-

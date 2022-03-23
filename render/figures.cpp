@@ -10,20 +10,25 @@
 #include "math.h"
 #include <vector>
 
+// ------------------------------- Figures -------------------------------
+
+SmartPoint::SmartPoint(bool valid): valid(valid) { };
+
+SmartPoint::SmartPoint(Vec3 point, Vec3 normal):
+    point(point), normal(normal)
+{ }
+
+SmartPoint::SmartPoint(Vec3 point, Vec3 normal, Color color, Material material, bool valid):
+    point(point), normal(normal), color(color), material(material), valid(valid)
+{ }
+
 // ------------------------------- Triangle -------------------------------
-/*
-Triangle::Triangle() {
+
+Triangle::Triangle(bool valid): valid(valid) {
     Vec3 v1(0, 0, 0), v2(0, 0, 0), v3(0, 0, 0);
     Vec3 n1(0, 0, 0), n2(0, 0, 0), n3(0, 0, 0);
     Vec3 N(0, 0, 0), U(0, 0, 0), V(0, 0, 0);
     double u0 = 0, v0 = 0;
-}
-
-bool Triangle::is_empty() {
-    if (n1.x == 0 && n1.y == 0 && n1.z == 0) {
-        return true;
-    }
-    return false;
 }
 
 Triangle::Triangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 n1, Vec3 n2, Vec3 n3):
@@ -65,75 +70,66 @@ Vec3 Triangle::get_normal(Vec3 P) {
 
 // ------------------------------- PolygonizedFigures -------------------------------
 
-SmartPoint PolygonizedFigure::get_intersection_SmartPoint(Ray r) {
-
-}
-
-Object* Sphere::clone() {
-
-    assert(arg.size() >= 4);
-    Sphere* rez = new Sphere();
-    rez->position =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
-    rez->radius = atof(arg[3].c_str());
-    if (arg.size() >= 5) rez->color = Color(arg[4]);
-    return rez;
-
-
-    body.push_back(Triangle(center + Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1)));
-    body.push_back(Triangle(center + Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, -1)));
-    body.push_back(Triangle(center + Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, 1)));
-    body.push_back(Triangle(center + Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, -1)));
-    body.push_back(Triangle(center - Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1)));
-    body.push_back(Triangle(center - Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, -1)));
-    body.push_back(Triangle(center - Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, 1)));
-    body.push_back(Triangle(center - Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, -1)));
-    std::vector<Triangle> next;
-    for (unsigned j = 0; j < iterations; j++) {
-        unsigned amount = body.size();
-        for (unsigned i = 0; i < amount; i++) {
-            Vec3 v1 = ((body[i].v1 + body[i].v2) / 2 - center).normalized() * radius + center;
-            Vec3 v2 = ((body[i].v2 + body[i].v3) / 2 - center).normalized() * radius + center;
-            Vec3 v3 = ((body[i].v1 + body[i].v3) / 2 - center).normalized() * radius + center;
-            next.push_back(Triangle(v1, v2, v3, (v1 - center).normalized(), (v2 - center).normalized(), (v2 - center).normalized()));
-            next.push_back(Triangle(body[i].v1, v1, v3, (body[i].v1 - center).normalized(), (v1 - center).normalized(), (v3 - center).normalized()));
-            next.push_back(Triangle(body[i].v2, v1, v2, (body[i].v2 - center).normalized(), (v1 - center).normalized(), (v2 - center).normalized()));
-            next.push_back(Triangle(body[i].v3, v2, v3, (body[i].v3 - center).normalized(), (v2 - center).normalized(), (v3 - center).normalized()));
-        }
-        body = next;
-        next.clear();
-    }
-}
-
-Triangle Sphere::get_intersection_triangle(Ray ray) {
-    double min = 1e10; // ищем ближайшее пересечение
-    Triangle ret;
-    for (std::vector<Triangle>::iterator it = body.begin(); it != body.end(); it++) {
-        if (it->check_intersection(ray)) {
-            if ((it->get_intersection_point(ray) - ray.pos).abs() < min) {
-                min = (it->get_intersection_point(ray) - ray.pos).abs();
-                ret = *it;
-            }
-        }
-    }
-    return ret;
-}
+// ------------------------------- Sphere -------------------------------
 
 std::pair<int,std::string> Sphere::name() const{
     return std::pair<int,std::string>(FIGURE, "Sphere");
 }
-*/
 
-// ------------------------------- AnaliticFigures -------------------------------
+SmartPoint Sphere::get_intersection_SmartPoint(Ray r) {
+    double min = 1e10; // ищем ближайшее пересечение
+    Triangle tr(false);
+    Vec3 point;
+    for (std::vector<Triangle>::iterator it = body.begin(); it != body.end(); it++) {
+        if (it->check_intersection(r)) {
+            point = it->get_intersection_point(r);
+            if ((point - r.pos).abs() < min) {
+                min = (point - r.pos).abs();
+                tr = *it;
+            }
+        }
+    }
+    if (!tr.valid) return SmartPoint(false); // нет пересечения
+    Vec3 normal = tr.get_normal(point);
+    return SmartPoint(point, normal, color, material);
+}
 
-SmartPoint::SmartPoint(bool valid): valid(valid) { };
+Object* Sphere::clone(std::vector<std::string> const & arg) {
+    assert(arg.size() >= 4);
+    Sphere* rez = new Sphere();
+    Vec3 center =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
+    double radius = atof(arg[3].c_str());
+    if (arg.size() >= 5) rez->color = Color(arg[4]);
+    if (arg.size() >= 6) rez->material = Material(arg[5]);
+    unsigned iterations = 2;
+    if (arg.size() >= 7) iterations = atoi(arg[6].c_str());
 
-SmartPoint::SmartPoint(Vec3 point, Vec3 normal):
-    point(point), normal(normal)
-{ }
+    rez->body.push_back(Triangle(center + Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1)));
+    rez->body.push_back(Triangle(center + Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, -1)));
+    rez->body.push_back(Triangle(center + Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, 1)));
+    rez->body.push_back(Triangle(center + Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, -1)));
+    rez->body.push_back(Triangle(center - Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1)));
+    rez->body.push_back(Triangle(center - Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, -1)));
+    rez->body.push_back(Triangle(center - Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, 1)));
+    rez->body.push_back(Triangle(center - Vec3(radius, 0, 0), center - Vec3(0, radius, 0), center - Vec3(0, 0, radius), Vec3(-1, 0, 0), Vec3(0, -1, 0), Vec3(0, 0, -1)));
 
-SmartPoint::SmartPoint(Vec3 point, Vec3 normal, Color color, Material material, bool valid):
-    point(point), normal(normal), color(color), material(material), valid(valid)
-{ }
+    std::vector<Triangle> next;
+    for (unsigned j = 0; j < iterations; j++) {
+        unsigned amount = rez->body.size();
+        for (unsigned i = 0; i < amount; i++) {
+            Vec3 v1 = ((rez->body[i].v1 + rez->body[i].v2) / 2 - center).normalized() * radius + center;
+            Vec3 v2 = ((rez->body[i].v2 + rez->body[i].v3) / 2 - center).normalized() * radius + center;
+            Vec3 v3 = ((rez->body[i].v1 + rez->body[i].v3) / 2 - center).normalized() * radius + center;
+            next.push_back(Triangle(v1, v2, v3, (v1 - center).normalized(), (v2 - center).normalized(), (v2 - center).normalized()));
+            next.push_back(Triangle(rez->body[i].v1, v1, v3, (rez->body[i].v1 - center).normalized(), (v1 - center).normalized(), (v3 - center).normalized()));
+            next.push_back(Triangle(rez->body[i].v2, v1, v2, (rez->body[i].v2 - center).normalized(), (v1 - center).normalized(), (v2 - center).normalized()));
+            next.push_back(Triangle(rez->body[i].v3, v2, v3, (rez->body[i].v3 - center).normalized(), (v2 - center).normalized(), (v3 - center).normalized()));
+        }
+        rez->body = next;
+        next.clear();
+    }
+    return rez;
+}
 
 // ------------------------------- BeautifulSphere -------------------------------
 
