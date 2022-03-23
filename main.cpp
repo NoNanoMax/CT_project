@@ -12,7 +12,7 @@
 
 int main() {
     Scene r;
-    r.initialization("scene.ass");
+    r.initialization("info.ass");
     r.render();
 
 

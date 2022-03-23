@@ -1,34 +1,215 @@
-from typing import Union, Any
-
-import numpy as np
-from matplotlib import pyplot as plt
+from PyQt5 import QtWidgets, QtGui
+from info import Ui_MainWindow
 import sys
-from subprocess import Popen, PIPE
+import os
+from drawer import draw_men_with_dumplings_lol 
+import numpy as np
 
-def useless_func():
-    a = np.random.randn(256, 256, 3)
-    a = np.abs(a)
-    a[a > 1] = 0
-    plt.imshow(a)
-    plt.axis(False)
-    plt.show()
+'''class Picture(QtWidgets.QMainWindow):
+    def __init__(self, pic):
+        super(Picture, self).__init__()
+        self.figure = Figure(figsize=(5, 3))
+        self.canvas = FigureCanvas(self.figure)
+        self.ax = self.figure.subplots()
+        self.pic = pic
+        self.ax.imshow(self.pic)
+        self.ax.set_axis_off()
+        self.setCentralWidget(self.canvas) '''
 
-def draw_men_with_dumplings_lol(PATH=None):
-    '''
-        input: (C, H, W) matrix
-    '''
-    if PATH is None:
-        sub_proc = Popen(["./run"], stdout=PIPE, universal_newlines=True)
-    (out, _) = sub_proc.communicate()
-    out = out.strip().split()
-    H, W, C = int(out[0]), int(out[1]), int(out[2])
-    picture = np.array(out[3:], dtype=float).reshape((H, W, C)) / 255
-    plt.axis(False)
-    plt.imshow(picture)
-    plt.savefig('scene.png', dpi = 300)
+class mywindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(mywindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        self.hide_all()
+        self.ui.label.setText("")
+
+        self.ui.label.setFont(
+            QtGui.QFont('SansSerif', 10)
+        )
+        self.ui.label_2.setFont(
+            QtGui.QFont('SansSerif', 10)
+        )
+        self.ui.label_2.setText("Введенные данные")
+        self.ui.pushButton_2.setText("Нарисовать")
+        self.ui.pushButton_3.setText("Очистить")
+
+        self.ui.pushButton.clicked.connect(self.btnClicked)
+        self.ui.pushButton_2.clicked.connect(self.draw)
+        self.ui.pushButton_3.clicked.connect(self.hide)
+
+        self.figures = []
+        self.to_put = ""
+        self.counter = 0
+        self.ui.pushButton.setText("Ввести объект")
+
+        self.name_figures = {
+            "Сфера": "BeautifulSphere",
+            "Плоскость": "BeautifulPlane",
+            "Освещение": "Ambient_light",
+            "Точечное освещение": "Point_light"
+        }
+
+        self.ui.comboBox.addItem("Сфера")
+        self.ui.comboBox.addItem("Плоскость")
+        self.ui.comboBox.addItem("Освещение")
+        self.ui.comboBox.addItem("Точечное освещение")
+
+    def draw(self):
+        f = open("info.ass", "w")
+        f.write("Camera 0 0 2 0 0 0 1.2 1000 1000 1\n")
+        f.write(self.to_put)
+        f.close()
+        draw_men_with_dumplings_lol()
+        os.remove("info.ass")
+
+    def hide(self):
+        self.hide_all()
+        self.to_put = ""
+        self.figures = []
+        self.ui.label.setText("")
+
+    def hide_all(self):
+        self.ui.lineEdit.hide()
+        self.ui.lineEdit_2.hide()
+        self.ui.lineEdit_3.hide()
+        self.ui.lineEdit_4.hide()
+        self.ui.lineEdit_5.hide()
+        self.ui.lineEdit_6.hide()
+
+        self.ui.lineEdit.clear()
+        self.ui.lineEdit_2.clear()
+        self.ui.lineEdit_3.clear()
+        self.ui.lineEdit_4.clear()
+        self.ui.lineEdit_5.clear()
+        self.ui.lineEdit_6.clear()
+
+        self.ui.label_3.setText("")
+        self.ui.label_4.setText("")
+        self.ui.label_5.setText("")
+        self.ui.label_6.setText("")
+        self.ui.label_7.setText("")
+        self.ui.label_8.setText("")
+
+    def btnClicked(self):
+        self.counter += 1
+
+        if self.counter == 1:
+            self.ui.pushButton.setText("Ввести данные")
+            typ = self.name_figures[self.ui.comboBox.currentText()]
+            if typ == "BeautifulSphere":
+                self.ui.label_3.setText("x")
+                self.ui.label_4.setText("y")
+                self.ui.label_5.setText("z")
+                self.ui.label_6.setText("радиус")
+                self.ui.label_7.setText("цвет")
+                self.ui.label_8.setText("материал")
+                self.ui.lineEdit.show()
+                self.ui.lineEdit_2.show()
+                self.ui.lineEdit_3.show()
+                self.ui.lineEdit_4.show()
+                self.ui.lineEdit_5.show()
+                self.ui.lineEdit_6.show()
+            
+            if typ == "BeautifulPlane":
+                self.ui.label_3.setText("x")
+                self.ui.label_4.setText("y")
+                self.ui.label_5.setText("z")
+                self.ui.label_6.setText("d")
+                self.ui.label_7.setText("цвет")
+                self.ui.label_8.setText("материал")
+                self.ui.lineEdit.show()
+                self.ui.lineEdit_2.show()
+                self.ui.lineEdit_3.show()
+                self.ui.lineEdit_4.show()
+                self.ui.lineEdit_5.show()
+                self.ui.lineEdit_6.show()
+
+            if typ == "Ambient_light":
+                self.ui.label_3.setText("i")
+                self.ui.lineEdit.show()
+
+            if typ == "Point_light":
+                self.ui.label_3.setText("x")
+                self.ui.label_4.setText("y")
+                self.ui.label_5.setText("z")
+                self.ui.label_6.setText("i")
+                self.ui.lineEdit.show()
+                self.ui.lineEdit_2.show()
+                self.ui.lineEdit_3.show()
+                self.ui.lineEdit_4.show()
+
+
+        if self.counter == 2:
+            self.ui.pushButton.setText("Добавить данные")
+            typ = self.name_figures[self.ui.comboBox.currentText()]
+            if typ == "BeautifulSphere":
+                self.figures.append({
+                    "figure": typ,
+                    "x": self.ui.lineEdit.text(),
+                    "y": self.ui.lineEdit_2.text(),
+                    "z": self.ui.lineEdit_3.text(),
+                    "r": self.ui.lineEdit_4.text(),
+                    "color": self.ui.lineEdit_5.text(),
+                    "mat": self.ui.lineEdit_6.text()
+                })
+                for s in self.figures[-1].values():
+                    self.to_put += s + " "
+                self.to_put += "\n"
+
+            if typ == "BeautifulPlane":
+                self.figures.append({
+                    "figure": typ,
+                    "x": self.ui.lineEdit.text(),
+                    "y": self.ui.lineEdit_2.text(),
+                    "z": self.ui.lineEdit_3.text(),
+                    "d": self.ui.lineEdit_4.text(),
+                    "color": self.ui.lineEdit_5.text(),
+                    "mat": self.ui.lineEdit_6.text()
+                })
+                for s in self.figures[-1].values():
+                    self.to_put += s + " "
+                self.to_put += "\n"
+            
+            if typ == "Ambient_light":
+                self.figures.append({
+                    "figure": typ,
+                    "i": self.ui.lineEdit.text()
+                })
+                for s in self.figures[-1].values():
+                    self.to_put += s + " "
+                self.to_put += "\n"
+
+            if typ == "Point_light":
+                self.ui.label_3.setText("x")
+                self.ui.label_4.setText("y")
+                self.ui.label_5.setText("z")
+                self.ui.label_6.setText("i")
+                self.ui.lineEdit.show()
+                self.ui.lineEdit_2.show()
+                self.ui.lineEdit_3.show()
+                self.ui.lineEdit_4.show()
+                self.figures.append({
+                    "figure": typ,
+                    "x": self.ui.lineEdit.text(),
+                    "y": self.ui.lineEdit_2.text(),
+                    "z": self.ui.lineEdit_3.text(),
+                    "i": self.ui.lineEdit_4.text()
+                })
+                for s in self.figures[-1].values():
+                    self.to_put += s + " "
+                self.to_put += "\n"
+
+            self.ui.pushButton.setText("Добавить объект")
+            self.hide_all()
+            self.ui.label.setText(self.to_put)   
+            self.counter = 0       
 
 if __name__ == "__main__":
-    PATH = None
-    if len(sys.argv) > 1:
-        PATH = sys.argv[1].strip()
-    draw_men_with_dumplings_lol(PATH)
+    app = QtWidgets.QApplication([])
+    application = mywindow()
+    application.show()
+    sys.exit(app.exec())
+
+
