@@ -42,11 +42,10 @@ public:
     // direction
     Vec3 dir;
     int x, y; 
-    // Интенсивности по цветам
-    Color color = Color(255, 255, 255);
+    double intensity = 1;
     Ray(Vec3 pos, Vec3 dir);
     Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y);
-    Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y, Color color);
+    Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y, double intensity);
 };
 
 class Matr3 {

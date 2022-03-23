@@ -16,9 +16,9 @@ Material::Material(std::string name, double n): n(n) {
         t_diffusion = 0.95;
     }
     if (name == "metall") {
-        t_reflection = 0.2;
+        t_reflection = 0.3;
         t_refraction = 0;
-        t_diffusion = 0.8;
+        t_diffusion = 0.7;
     }
     if (name == "glass") {
         t_reflection = 0.1;

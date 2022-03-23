@@ -75,8 +75,8 @@ Ray::Ray(Vec3 pos, Vec3 dir):
 Ray::Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y):
      pos(pos), dir(dir), x(x), y(y) { }
 
-Ray::Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y, Color color):
-     pos(pos), dir(dir), x(x), y(y), color(color) { }
+Ray::Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y, double intensity):
+     pos(pos), dir(dir), x(x), y(y), intensity(intensity) { }
 
 
 // --------------------------------------------- Matr3 ---------------------------------------------

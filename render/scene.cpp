@@ -32,12 +32,12 @@ Ray Camera::calculate_ray(unsigned x, unsigned y) {
         Vec3 point(cos(beta) * sin(alpha), cos(beta) * cos(alpha), sin(beta));
         Vec3 screen_point = point + position;
         Vec3 direction(rotate * point);
-        return Ray(position, direction.normalized(), x, y);
+        return Ray(position, direction.normalized(), x, y, 1);
     } else {
         Vec3 point(2 * tan(FOV_X / 2) * (x * 1.0 / X - 0.5), 1, 2 * tan(FOV_Y / 2) * (y * 1.0 / Y - 0.5));
         Vec3 screen_point = point + position;
         Vec3 direction(rotate * point);
-        return Ray(position, direction.normalized(), x, y);
+        return Ray(position, direction.normalized(), x, y, 1);
     }
 }
 
@@ -207,26 +207,34 @@ double Scene::full_intensity_in_point(SmartPoint smartpoint, std::vector<Figure*
     return ret;
 }
 
-void Scene::trace_ray(Ray ray) {
-    double r = 30; double b = 255; double g = 144; //set background color
+Ray reflected_ray(SmartPoint smartpoint, Ray incident) {
+    Vec3 direction = incident.dir - 2 * smartpoint.normal * dot(smartpoint.normal, incident.dir);
+    return Ray(smartpoint.point, direction, incident.x, incident.y, incident.intensity * smartpoint.material.t_reflection);
+}
 
+// Ray refacted_ray(SmartPoint smartpoint, Ray incident) {
+//     
+//     
+// }
+
+void Scene::trace_ray(Ray ray) {
+    if (ray.intensity < STOP_INTENSITY) return;
     SmartPoint intersetion_SmartPoint = get_first_SmartPoint(ray);
     if (intersetion_SmartPoint.valid) {
-
         Color color = intersetion_SmartPoint.color;
-        double light = full_intensity_in_point(intersetion_SmartPoint, &figures);
-        // printf("%lf %lf %lf\n", ray.pos.x, ray.pos.y, ray.pos.z);
+        double light = full_intensity_in_point(intersetion_SmartPoint, &figures); 
 
-        r = light * color.r;
-        g = light * color.g;
-        b = light * color.b;
+        double r = res[ray.x][ray.y].r + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.r;
+        double g = res[ray.x][ray.y].g + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.g;
+        double b = res[ray.x][ray.y].b + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.b;
 
         if (r > 255) r = 255;
         if (g > 255) g = 255;
         if (b > 255) b = 255;
+        res[ray.x][ray.y] = Color(r, g, b);
         
+        trace_ray(reflected_ray(intersetion_SmartPoint, ray));
     }
-    res[ray.x][ray.y] = Color(r, g, b);
 }
 
 void Scene::render() {

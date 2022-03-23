@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include "linal/linal.h"
+#include "constants.h"
 #include <vector>
 #include "math.h"
 
