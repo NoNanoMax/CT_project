@@ -1,8 +1,8 @@
 from PyQt5 import QtWidgets, QtGui
-from info import Ui_MainWindow
+from lib.info import Ui_MainWindow
 import sys
 import os
-from drawer import draw_men_with_dumplings_lol 
+from lib.drawer import draw_men_with_dumplings_lol 
 import numpy as np
 
 '''class Picture(QtWidgets.QMainWindow):
