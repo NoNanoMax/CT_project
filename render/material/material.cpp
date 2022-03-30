@@ -11,9 +11,9 @@
 
 Material::Material(std::string name, double n): n(n) {
     if (name == "dielectric"){
-        t_reflection = 0.05;
+        t_reflection = 0;
         t_refraction = 0;
-        t_diffusion = 0.95;
+        t_diffusion = 1;
     }
     if (name == "metall") {
         t_reflection = 0.3;

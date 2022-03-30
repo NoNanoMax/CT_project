@@ -87,6 +87,17 @@ public:
     SmartPoint get_intersection_SmartPoint(Ray r);
 };
 
+class Tetraedr : public Figure, public Object {
+public:
+    Color color = Color(255, 255, 255);;
+    Material material = Material("dielectric");
+    std::vector<Triangle> body;
+    Tetraedr() { }
+    Object* clone(std::vector<std::string> const & arg);
+    std::pair<int,std::string> name() const;
+    SmartPoint get_intersection_SmartPoint(Ray r);
+};
+
 // ------------------------------- AnaliticFigures -------------------------------
 
 class BeautifulSphere : public Figure, public Object {

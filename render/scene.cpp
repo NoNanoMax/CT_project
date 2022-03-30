@@ -143,7 +143,7 @@ void Scene::initialization(const char * input) {
         new Camera(), new Ambient_light(),
         new Point_light(), new Directed_light(),
         new BeautifulPlane(), new BeautifulSphere(),
-        new Sphere()
+        new Sphere(), new Tetraedr()
     };
 
     for (auto obj : zigotes) {
@@ -184,8 +184,8 @@ void Scene::initialization(const char * input) {
 // returns intersected SmartPoint else valid = false
 SmartPoint Scene::get_first_SmartPoint(Ray ray) {
     SmartPoint intersected(false); // точка пересечения
-
-    double min = 1e5; // минимум расстояния до пересеченной фигуры
+    
+    double min = INFINITY; // минимум расстояния до пересеченной фигуры
     for (std::vector<Figure*>::iterator it = figures.begin(); it != figures.end(); it++) {
         SmartPoint point = (*it)->get_intersection_SmartPoint(ray);
         if (point.valid && (point.point - ray.pos).abs() < min) {
@@ -207,7 +207,7 @@ double Scene::full_intensity_in_point(SmartPoint smartpoint, std::vector<Figure*
 
 Ray reflected_ray(SmartPoint smartpoint, Ray incident) {
     Vec3 direction = incident.dir - 2 * smartpoint.normal * dot(smartpoint.normal, incident.dir);
-    return Ray(smartpoint.point, direction, incident.x, incident.y, incident.intensity * smartpoint.material.t_reflection);
+    return Ray(smartpoint.point + smartpoint.normal * ZERO, direction, incident.x, incident.y, incident.intensity * smartpoint.material.t_reflection);
 }
 
 // Ray refacted_ray(SmartPoint smartpoint, Ray incident) {
@@ -225,7 +225,7 @@ void Scene::trace_ray(Ray ray) {
         double r = res[ray.x][ray.y].r + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.r;
         double g = res[ray.x][ray.y].g + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.g;
         double b = res[ray.x][ray.y].b + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.b;
-
+        
         if (r > 255) r = 255;
         if (g > 255) g = 255;
         if (b > 255) b = 255;
