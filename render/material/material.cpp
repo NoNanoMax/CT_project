@@ -25,6 +25,11 @@ Material::Material(std::string name, double n): n(n) {
         t_refraction = 0.9;
         t_diffusion = 0;
     }
+    if (name == "mirror") {
+        t_reflection = 1;
+        t_refraction = 0;
+        t_diffusion = 0;
+    }
 }
 
 Material::Material(double t_reflection, double t_refraction, double t_diffusion, double n):

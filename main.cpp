@@ -12,9 +12,8 @@
 
 int main() {
     Scene r;
-    r.initialization("info.ass");
+    r.initialization("tmp_info.ass");
     r.render();
-
 
     Color** res = r.get_res();
     int height =  r.get_camera()->height();

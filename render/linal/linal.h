@@ -48,6 +48,8 @@ public:
     Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y, double intensity);
 };
 
+double distance(Ray r, Vec3 point);
+
 class Matr3 {
 public:
     double body[3][3];

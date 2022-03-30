@@ -79,6 +79,10 @@ Ray::Ray(Vec3 pos, Vec3 dir, unsigned x, unsigned y, double intensity):
      pos(pos), dir(dir), x(x), y(y), intensity(intensity) { }
 
 
+double distance(Ray r, Vec3 point) {
+    return (vv(r.dir, r.pos - point).abs());
+}
+
 // --------------------------------------------- Matr3 ---------------------------------------------
 
 Matr3::Matr3() {

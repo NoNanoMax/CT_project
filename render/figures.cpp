@@ -43,13 +43,13 @@ Triangle::Triangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 n1, Vec3 n2, Vec3 n3):
 }
 
 bool Triangle::check_intersection(Ray ray) {
-    if (abs(dot(N, ray.dir)) < 1e-10) return false; // проверка на параллельность
+    if (abs(dot(N, ray.dir)) < ZERO) return false; // проверка на параллельность
     double t = - (dot(N, ray.pos) + D) / dot(N, ray.dir);
     if (t < 0) return false; // смотрит в другую сторону
     Vec3 P = ray.pos + ray.dir * t; // точка пересечения
     double u = dot(P, U) - u0; // барицентрические
     double v = dot(P, V) - v0; // координаты
-    if (0 <= u && u <= 1 && 0 <= v && v <= 1 && u + v <= 1) {
+    if (-ZERO <= u && u <= 1 + ZERO && -ZERO <= v && v <= 1 + ZERO && u + v <= 1 + ZERO) {
         return true;
     } else {
         return false;
@@ -77,7 +77,11 @@ std::pair<int,std::string> Sphere::name() const{
 }
 
 SmartPoint Sphere::get_intersection_SmartPoint(Ray r) {
-    double min = 1e10; // ищем ближайшее пересечение
+    if (distance(r, position) > radius) {
+        return SmartPoint(false);
+    }
+
+    double min = INFINITY; // ищем ближайшее пересечение
     Triangle tr(false);
     Vec3 point;
     for (std::vector<Triangle>::iterator it = body.begin(); it != body.end(); it++) {
@@ -91,6 +95,7 @@ SmartPoint Sphere::get_intersection_SmartPoint(Ray r) {
     }
     if (!tr.valid) return SmartPoint(false); // нет пересечения
     Vec3 normal = tr.get_normal(point);
+    point = (point - position).normalized() * radius;
     return SmartPoint(point, normal, color, material);
 }
 
@@ -99,6 +104,8 @@ Object* Sphere::clone(std::vector<std::string> const & arg) {
     Sphere* rez = new Sphere();
     Vec3 center =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
     double radius = atof(arg[3].c_str());
+    rez->radius = radius;
+    rez->position = center;
     if (arg.size() >= 5) rez->color = Color(arg[4]);
     if (arg.size() >= 6) rez->material = Material(arg[5]);
     unsigned iterations = 2;
@@ -128,6 +135,7 @@ Object* Sphere::clone(std::vector<std::string> const & arg) {
         rez->body = next;
         next.clear();
     }
+
     return rez;
 }
 

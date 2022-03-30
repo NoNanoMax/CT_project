@@ -96,11 +96,9 @@ Object* Camera::clone(std::vector<std::string> const & arg){
     return rez;
 }
 
-
 std::pair<int, std::string> Camera::name() const {
     return std::pair<int,std::string>(CAMERA, "Camera");
 }
-
 
 // ------------------------------- scene -------------------------------
 

@@ -78,6 +78,8 @@ class Sphere : public Figure, public Object {
 public:
     Color color = Color(255, 255, 255);;
     Material material = Material("dielectric");
+    Vec3 position = Vec3(0, 0, 0);
+    double radius = 0;
     std::vector<Triangle> body;
     Sphere() { }
     Object* clone(std::vector<std::string> const & arg);
