@@ -136,7 +136,7 @@ std::vector<std::string> split(std::string const &s) {
     return ret;
 }
 
-// build figures and lights pos input, deafult "input.txt"
+// build figures and lights pos input
 void Scene::initialization(const char * input) {
     std::map<std::string, std::pair<int,Object*>> factory;
     std::vector<Object*> zigotes = {
@@ -210,10 +210,26 @@ Ray reflected_ray(SmartPoint smartpoint, Ray incident) {
     return Ray(smartpoint.point + smartpoint.normal * ZERO, direction, incident.x, incident.y, incident.intensity * smartpoint.material.t_reflection);
 }
 
-// Ray refacted_ray(SmartPoint smartpoint, Ray incident) {
-//     
-//     
-// }
+Ray refracted_ray(SmartPoint smartpoint, Ray incident) {
+    double sin_alpha = vv(smartpoint.normal, incident.dir).abs();
+    double cos_alpha = sqrt(1 - sin_alpha * sin_alpha);
+    Vec3 point;
+    Vec3 direction;
+    if (dot(smartpoint.normal, incident.dir) < 0) {
+        double sin_beta = sin_alpha / smartpoint.material.n;
+        double cos_beta = sqrt(1 - sin_beta * sin_beta);
+        direction = ((incident.dir + smartpoint.normal * cos_alpha).normalized() * sin_beta - smartpoint.normal * cos_beta);
+        point = smartpoint.point - smartpoint.normal * ZERO;
+    } else {
+        //return Ray(smartpoint.point + incident.dir * ZERO, incident.dir, incident.x, incident.y, incident.intensity * smartpoint.material.t_refraction);
+        double sin_beta = sin_alpha * smartpoint.material.n;
+        if (sin_beta > 1) sin_beta = 1;
+        double cos_beta = sqrt(1 - sin_beta * sin_beta);
+        direction = ((incident.dir - smartpoint.normal * cos_alpha).normalized() * sin_beta + smartpoint.normal * cos_beta);
+        point = smartpoint.point + smartpoint.normal * ZERO;
+    }
+    return Ray(point, direction, incident.x, incident.y, incident.intensity * smartpoint.material.t_refraction);
+}
 
 void Scene::trace_ray(Ray ray) {
     if (ray.intensity < STOP_INTENSITY) return;
@@ -232,6 +248,7 @@ void Scene::trace_ray(Ray ray) {
         res[ray.x][ray.y] = Color(r, g, b);
         
         trace_ray(reflected_ray(intersetion_SmartPoint, ray));
+        trace_ray(refracted_ray(intersetion_SmartPoint, ray));
     }
 }
 

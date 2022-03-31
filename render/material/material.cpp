@@ -9,7 +9,7 @@
 #include <string>
 #include "material.h"
 
-Material::Material(std::string name, double n): n(n) {
+Material::Material(std::string name) {
     if (name == "dielectric"){
         t_reflection = 0;
         t_refraction = 0;
@@ -24,11 +24,12 @@ Material::Material(std::string name, double n): n(n) {
         t_reflection = 0.1;
         t_refraction = 0.9;
         t_diffusion = 0;
+        n = 1.1;
     }
     if (name == "mirror") {
-        t_reflection = 1;
+        t_reflection = 0.9;
         t_refraction = 0;
-        t_diffusion = 0;
+        t_diffusion = 0.1;
     }
 }
 

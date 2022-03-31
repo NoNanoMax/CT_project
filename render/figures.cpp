@@ -76,14 +76,10 @@ std::pair<int,std::string> Sphere::name() const{
     return std::pair<int,std::string>(FIGURE, "Sphere");
 }
 
-#include <iostream>
-using namespace std;
-
 SmartPoint Sphere::get_intersection_SmartPoint(Ray r) {
     if (distance(r, position) > radius) {
         return SmartPoint(false);
     }
-
     double min = INFINITY; // ищем ближайшее пересечение
     Triangle tr(false);
     Vec3 point;
@@ -112,7 +108,7 @@ Object* Sphere::clone(std::vector<std::string> const & arg) {
     rez->position = center;
     if (arg.size() >= 5) rez->color = Color(arg[4]);
     if (arg.size() >= 6) rez->material = Material(arg[5]);
-    unsigned iterations = 3;
+    unsigned iterations = 2;
     if (arg.size() >= 7) iterations = atoi(arg[6].c_str());
 
     rez->body.push_back(Triangle(center + Vec3(radius, 0, 0), center + Vec3(0, radius, 0), center + Vec3(0, 0, radius), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1)));
@@ -169,14 +165,25 @@ SmartPoint Tetraedr::get_intersection_SmartPoint(Ray r) {
     return SmartPoint(point, normal, color, material);
 }
 
-// v1.x v1.y v1.z v2.x v2.y v2.z v3.x v3.y v3.z v4.x v4.y v4.z
+// v1.x v1.y v1.z [ v2.x v2.y v2.z v3.x v3.y v3.z v4.x v4.y v4.z ]
 Object* Tetraedr::clone(std::vector<std::string> const & arg) {
-    assert(arg.size() >= 12);
+    assert(arg.size() >= 3);
     Tetraedr* rez = new Tetraedr();
     Vec3 pos =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
-    Vec3 a =  Vec3(atof(arg[3].c_str()),atof(arg[4].c_str()),atof(arg[5].c_str()));
-    Vec3 b =  Vec3(atof(arg[6].c_str()),atof(arg[7].c_str()),atof(arg[8].c_str()));
-    Vec3 c =  Vec3(atof(arg[9].c_str()),atof(arg[10].c_str()),atof(arg[11].c_str()));
+    Vec3 a(-2, 1, -2);
+    Vec3 b(0, -2, -2);
+    Vec3 c(2, 1, -2);
+    if (arg.size() == 4 || arg.size() == 5) {
+        rez->color = Color(arg[3]);
+    }
+    if (arg.size() == 5) {
+        rez->material = Material(arg[4]);
+    }
+    if (arg.size() >= 12) {
+        a =  Vec3(atof(arg[3].c_str()),atof(arg[4].c_str()),atof(arg[5].c_str()));
+        b =  Vec3(atof(arg[6].c_str()),atof(arg[7].c_str()),atof(arg[8].c_str()));
+        c =  Vec3(atof(arg[9].c_str()),atof(arg[10].c_str()),atof(arg[11].c_str()));
+    }
     if (arg.size() >= 13) rez->color = Color(arg[12]);
     if (arg.size() >= 14) rez->material = Material(arg[13]);
     
@@ -221,8 +228,9 @@ SmartPoint BeautifulSphere::get_intersection_SmartPoint(Ray ray) {
     if (delta > 0) {
         double t1 = (- b + sqrt(delta)) / 2;
         double t2 = (- b - sqrt(delta)) / 2;
-        if (t1 > 0 and t2 > 0) {
-            if (t1 > t2) t1 = t2;
+        if (t1 > 0 || t2 > 0) {
+            if (t1 > 0 and t2 > 0 and t1 > t2) t1 = t2;
+            if (t1 < 0) t1 = t2;
             ret.point = ray.pos + t1 * ray.dir;
             ret.valid = true;
         }
@@ -230,7 +238,7 @@ SmartPoint BeautifulSphere::get_intersection_SmartPoint(Ray ray) {
     if (!ret.valid) {
         return ret;
     }
-    ret.normal = ret.point - this->position;
+    ret.normal = (ret.point - this->position).normalized();
     ret.color = color;
     ret.material = material;
     return ret;

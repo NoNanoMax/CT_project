@@ -12,9 +12,9 @@
 class Material {
 public:
     double t_reflection, t_refraction, t_diffusion;
-    double n; // показатель преломления
-    Material(std::string name, double n = 1.33);
-    Material(double t_reflection, double t_refraction, double t_diffusion, double n = 1.33);
+    double n = 1; // показатель преломления
+    Material(std::string name);
+    Material(double t_reflection, double t_refraction, double t_diffusion, double n = 1);
 };
 
 class Color {

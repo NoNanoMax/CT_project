@@ -13,11 +13,10 @@
 #include "math.h"
 #include "scene.h"
 
-
 SmartPoint get_first_SmartPoint(Ray r, std::vector<Figure*>* figures_pointer) {
     SmartPoint intersected(false); // точка пересечения
 
-    double min = 1e5; // минимум расстояния до пересеченной фигуры
+    double min = INFINITY; // минимум расстояния до пересеченной фигуры
     for (std::vector<Figure*>::iterator it = figures_pointer->begin(); it != figures_pointer->end(); it++) {
         SmartPoint point = (*it)->get_intersection_SmartPoint(r);
         if (point.valid && (point.point - r.pos).abs() < min) {
@@ -25,6 +24,7 @@ SmartPoint get_first_SmartPoint(Ray r, std::vector<Figure*>* figures_pointer) {
             intersected = point;
         }
     }
+
     //if no intersection returns "negative" result
     return intersected;
 }
@@ -65,14 +65,14 @@ Object* Point_light::clone(std::vector<std::string> const &arg){
 }
 
 double Point_light::intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer) {
-    Ray target_ray = Ray(smartpoint.point, (position - smartpoint.point).normalized());
-    target_ray.pos = target_ray.pos + smartpoint.normal * ZERO;
+    Ray target_ray = Ray(smartpoint.point + smartpoint.normal * ZERO, (position - smartpoint.point).normalized());
     SmartPoint res = get_first_SmartPoint(target_ray, figures_pointer);
 
     if (!res.valid || ((position - smartpoint.point).abs() < (res.point - smartpoint.point).abs())) {
         double ret = - cos(smartpoint.point - position, smartpoint.normal) * intensity;
         return (ret > 0 ? ret : 0);
     }
+
     return 0;
 }
 
