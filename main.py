@@ -34,10 +34,15 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.label_2.setText("Введенные данные")
         self.ui.pushButton_2.setText("Нарисовать")
         self.ui.pushButton_3.setText("Очистить")
+        self.ui.label_9.setText("Имя файла")
+        self.ui.pushButton_4.setText("Загрузить сцену")
+        self.ui.pushButton_5.setText("Сохранить сцену")
 
         self.ui.pushButton.clicked.connect(self.btnClicked)
         self.ui.pushButton_2.clicked.connect(self.draw)
         self.ui.pushButton_3.clicked.connect(self.hide)
+        self.ui.pushButton_4.clicked.connect(self.OpenFile)
+        self.ui.pushButton_5.clicked.connect(self.SaveFile)
 
         self.figures = []
         self.to_put = ""
@@ -56,6 +61,19 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.comboBox.addItem("Освещение")
         self.ui.comboBox.addItem("Точечное освещение")
 
+    def SaveFile(self):
+        filename = self.ui.lineEdit_7.text()
+        f = open(os.path.join("scene_collection", filename), "w")
+        f.write(self.to_put)
+        f.close()
+
+    def OpenFile(self):
+        filename = self.ui.lineEdit_7.text()
+        f = open(os.path.join("scene_collection", filename), "r")
+        self.to_put = f.read()
+        self.ui.label.setText(self.to_put)   
+        f.close()
+
     def draw(self):
         f = open("info.ass", "w")
         f.write("Camera 0 0 2 0 0 0 1.2 1000 1000 1\n")
@@ -67,7 +85,7 @@ class mywindow(QtWidgets.QMainWindow):
     def hide(self):
         self.hide_all()
         self.to_put = ""
-        self.figures = []
+        self.figures = ""
         self.ui.label.setText("")
 
     def hide_all(self):
@@ -210,6 +228,5 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     application = mywindow()
     application.show()
+
     sys.exit(app.exec())
-
-
