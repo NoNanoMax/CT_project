@@ -98,9 +98,23 @@ public:
     SmartPoint get_intersection_SmartPoint(Ray r);
 };
 
+// полигональные фигуры использующие формат .obj
+class PolyFigure : public Figure, public Object{
+    std::vector<std::vector<Triangle>> *body;
+    Color color = Color(255, 255, 255);;
+    Material material = Material("dielectric");
+public:
+    PolyFigure();
+    ~PolyFigure();
+    PolyFigure(const char * filename);
+    Object* clone(std::vector<std::string> const & arg);
+    std::pair<int, std::string> name() const;
+    SmartPoint get_intersection_SmartPoint(Ray y);  
+};
 // ------------------------------- AnaliticFigures -------------------------------
 
 class BeautifulSphere : public Figure, public Object {
+    
     Vec3 position = Vec3(0, 0, 0);
     double radius = 0;
     Color color = Color(255, 255, 255);

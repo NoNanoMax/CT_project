@@ -70,6 +70,104 @@ Vec3 Triangle::get_normal(Vec3 P) {
 
 // ------------------------------- PolygonizedFigures -------------------------------
 
+PolyFigure::PolyFigure(){
+    body = new std::vector<std::vector<Triangle>>;
+}
+PolyFigure::~PolyFigure(){
+    delete body;
+}
+
+std::vector<std::string> split(std::string const &s, std::string delimeter = " ") {
+    std::vector<std::string> ret;
+    size_t pos = 0, old_pos = 0;
+    while ((pos = s.find(delimeter, pos)) != -1) {
+        ret.push_back(s.substr(old_pos, pos - old_pos));
+        pos++;
+        old_pos = pos;
+        
+    }
+    ret.push_back(s.substr(old_pos, s.size() - pos));
+    return ret;
+}
+
+PolyFigure::PolyFigure(const char* filename){
+    body = new std::vector<std::vector<Triangle>>;
+    body->push_back(std::vector<Triangle>());
+    short number = 0;
+    std::vector<Vec3> vertices{Vec3()};
+    std::vector<Vec3> normal{Vec3()};
+    std::vector<Vec3> texture{Vec3()};
+
+    auto to_vec = [](std::vector<std::string> &vec) -> Vec3{
+        Vec3 v = Vec3(atof(vec[1].c_str()), atof(vec[2].c_str()), atof(vec[3].c_str()));
+        return v + Vec3(-2,5,0);
+    };
+  
+
+    auto to_tr = [&vertices, &normal](std::vector<std::string> &vec) -> Triangle{
+        std::vector<std::string> f_1 = split(vec[1], "/");
+        std::vector<std::string>  f_2 = split(vec[2], "/");
+        std::vector<std::string>  f_3 = split(vec[3], "/");
+        return Triangle(vertices[atoi(f_1[0].c_str())],vertices[atoi(f_2[0].c_str())], vertices[atoi(f_3[0].c_str())],
+                normal[atoi(f_1[2].c_str())], normal[atoi(f_2[2].c_str())], normal[atoi(f_3[2].c_str())]);
+    };
+
+    std::ifstream inn(filename);
+    if(!inn){
+        perror("no input file:");
+    }
+    std::string s;
+    while(getline(inn, s)){
+        std::vector<std::string> args = split(s);
+        if(args.empty())
+            continue;
+        std::string name = args[0];
+        if(name == "v") vertices.push_back(to_vec(args));
+        else if(name == "vn") normal.push_back(to_vec(args));
+        else if(name == "vt") texture.push_back(to_vec(args));
+        else if(name == "g") ++number, body->push_back(std::vector<Triangle>());
+        else if(name == "f")  (*body)[number].push_back(to_tr(args));
+    }
+
+    return;
+}
+
+
+Object* PolyFigure::clone(std::vector<std::string> const &arg){
+    assert(arg.size() >= 1);
+    PolyFigure* rez = new PolyFigure();
+    PolyFigure f(arg[0].c_str());
+    rez->body = f.body;
+    f.body = nullptr;
+    return rez;
+}
+
+std::pair<int, std::string> PolyFigure::name() const{
+    return {FIGURE, "PolyFigure"};
+}
+
+SmartPoint PolyFigure::get_intersection_SmartPoint(Ray r){
+    double min = INFINITY; // ищем ближайшее пересечение
+    Triangle tr(false);
+    Vec3 point;
+    Vec3 tmp;
+    for(std::vector<Triangle>& bod : *body){
+        for (std::vector<Triangle>::iterator it = bod.begin(); it != bod.end(); it++) {
+                if (it->check_intersection(r)) {
+                    tmp = it->get_intersection_point(r);
+                    if ((tmp - r.pos).abs() < min) {
+                        min = (tmp - r.pos).abs();
+                        tr = *it;
+                        point = tmp;
+                    }
+                }
+            }
+    }
+    
+    if (!tr.valid) return SmartPoint(false); // нет пересечения
+    Vec3 normal = tr.get_normal(point);
+    return SmartPoint(point, normal, color, material);
+}
 // ------------------------------- Sphere -------------------------------
 
 std::pair<int,std::string> Sphere::name() const{

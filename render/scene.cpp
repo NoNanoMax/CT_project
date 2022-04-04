@@ -143,7 +143,7 @@ void Scene::initialization(const char * input) {
         new Camera(), new Ambient_light(),
         new Point_light(), new Directed_light(),
         new BeautifulPlane(), new BeautifulSphere(),
-        new Sphere(), new Tetraedr()
+        new Sphere(), new Tetraedr(), new PolyFigure()
     };
 
     for (auto obj : zigotes) {
