@@ -1,3 +1,4 @@
+Camera 
 Ambient_light 0.3 
 Point_light 0 19 10 0.8 
 Point_light 0 1 10 0.3 
@@ -6,3 +7,4 @@ BeautifulSphere -6 13 0 3 green
 BeautifulSphere -2 19 0 5 blue metall 
 BeautifulPlane 0 0 1 -2 deep_purple metall 
 BeautifulPlane 0 1 0 30 white  
+PolyFigure /home/ilgam/123/4_SEM/CT_project/scene_collection/T-Rex/T-Rex_Model.obj
