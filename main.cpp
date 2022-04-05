@@ -7,7 +7,7 @@
 
 
 #include "render/scene.h"
-#include "iostream"
+#include "stdio.h"
 #include <vector>
 
 int main() {
@@ -26,7 +26,7 @@ int main() {
             printf("%03d %03d %03d ", int(res[i][j].r), int(res[i][j].g), int(res[i][j].b));
         }
    	}
-	std::cout << "\n";
+	printf("\n");
 
     return 0;
 }

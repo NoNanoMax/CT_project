@@ -11,18 +11,11 @@
 #include <map>
 #include <fstream>
 #include <sstream>
-#include <cassert>
-#include <sstream>
-#include <cassert>
-#include <stdio.h>
-#include <fstream>
 #include <string>
-#include <stdlib.h>
-
 #include "linal/linal.h"
 #include "constants.h"
 #include <vector>
-#include "math.h"
+#include <stdlib.h>
 
 
 enum types{CAMERA, LIGHT, FIGURE};
@@ -126,7 +119,6 @@ public:
     //returns point of intersection else valid = false
     SmartPoint get_intersection_SmartPoint(Ray ray);
 };
-
 
 class BeautifulPlane : public Figure, public Object {
     Vec3 normal = Vec3(0, 0, 1);

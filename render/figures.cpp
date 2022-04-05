@@ -94,22 +94,21 @@ PolyFigure::PolyFigure(const char* filename){
     body = new std::vector<std::vector<Triangle>>;
     body->push_back(std::vector<Triangle>());
     short number = 0;
-    std::vector<Vec3> vertices{Vec3()};
-    std::vector<Vec3> normal{Vec3()};
-    std::vector<Vec3> texture{Vec3()};
+    std::vector<Vec3> vertexes{Vec3()};
+    std::vector<Vec3> normals{Vec3()};
+    std::vector<Vec3> textures{Vec3()};
 
     auto to_vec = [](std::vector<std::string> &vec) -> Vec3{
         Vec3 v = Vec3(atof(vec[1].c_str()), atof(vec[2].c_str()), atof(vec[3].c_str()));
         return v + Vec3(-2,5,0);
     };
-  
 
-    auto to_tr = [&vertices, &normal](std::vector<std::string> &vec) -> Triangle{
+    auto to_tr = [&vertexes, &normals](std::vector<std::string> &vec) -> Triangle{
         std::vector<std::string> f_1 = split(vec[1], "/");
         std::vector<std::string>  f_2 = split(vec[2], "/");
         std::vector<std::string>  f_3 = split(vec[3], "/");
-        return Triangle(vertices[atoi(f_1[0].c_str())],vertices[atoi(f_2[0].c_str())], vertices[atoi(f_3[0].c_str())],
-                normal[atoi(f_1[2].c_str())], normal[atoi(f_2[2].c_str())], normal[atoi(f_3[2].c_str())]);
+        return Triangle(vertexes[atoi(f_1[0].c_str())],vertexes[atoi(f_2[0].c_str())], vertexes[atoi(f_3[0].c_str())],
+                normals[atoi(f_1[2].c_str())], normals[atoi(f_2[2].c_str())], normals[atoi(f_3[2].c_str())]);
     };
 
     std::ifstream inn(filename);
@@ -122,14 +121,12 @@ PolyFigure::PolyFigure(const char* filename){
         if(args.empty())
             continue;
         std::string name = args[0];
-        if(name == "v") vertices.push_back(to_vec(args));
-        else if(name == "vn") normal.push_back(to_vec(args));
-        else if(name == "vt") texture.push_back(to_vec(args));
+        if(name == "v") vertexes.push_back(to_vec(args));
+        else if(name == "vn") normals.push_back(to_vec(args));
+        else if(name == "vt") textures.push_back(to_vec(args));
         else if(name == "g") ++number, body->push_back(std::vector<Triangle>());
         else if(name == "f")  (*body)[number].push_back(to_tr(args));
     }
-
-    return;
 }
 
 
@@ -168,6 +165,7 @@ SmartPoint PolyFigure::get_intersection_SmartPoint(Ray r){
     Vec3 normal = tr.get_normal(point);
     return SmartPoint(point, normal, color, material);
 }
+
 // ------------------------------- Sphere -------------------------------
 
 std::pair<int,std::string> Sphere::name() const{
