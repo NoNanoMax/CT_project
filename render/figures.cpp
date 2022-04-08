@@ -129,9 +129,11 @@ Object* PolyFigure::clone(std::vector<std::string> const &arg) {
         if (with_normals) {
             std::vector<Vec3> f_normals;
             for (short i = 1; i < vec.size(); i++) {
-                f1_str = split(vec[i], "/");
-                f_vertices.push_back(vertices[atoi(f1_str[0].c_str()) - 1]);
-                f_normals.push_back(normals[atoi(f1_str[2].c_str()) - 1]);
+                if (vec[i][0] != 13 && vec[i][0] != 10) {
+                    f1_str = split(vec[i], "/");
+                    f_vertices.push_back(vertices[atoi(f1_str[0].c_str()) - 1]);
+                    f_normals.push_back(normals[atoi(f1_str[2].c_str()) - 1]);
+                }
             }
             for (short i = 1; i + 1 < f_vertices.size(); i++) {
                 rez->body->at(number).push_back(Triangle(f_vertices[0], f_vertices[i], f_vertices[i + 1], f_normals[0], f_normals[i], f_normals[i + 1]));
