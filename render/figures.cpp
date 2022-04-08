@@ -128,10 +128,16 @@ Object* PolyFigure::clone(std::vector<std::string> const &arg) {
         std::vector<Vec3> f_vertices;
         if (with_normals) {
             std::vector<Vec3> f_normals;
-            // for (short i = 2; i + 1 < vec.size(); i++) {
-            //     rez->body->at(number).push_back(Triangle(vertices[atoi(f_1[0].c_str()) - 1],vertices[atoi(f_2[0].c_str()) - 1], vertices[atoi(f_3[0].c_str()) - 1],
-            //     normals[atoi(f_1[2].c_str()) - 1], normals[atoi(f_2[2].c_str()) - 1], normals[atoi(f_3[2].c_str()) - 1]));
-            // }
+            for (short i = 1; i < vec.size(); i++) {
+                f1_str = split(vec[i], "/");
+                f_vertices.push_back(vertices[atoi(f1_str[0].c_str()) - 1]);
+                f_normals.push_back(normals[atoi(f1_str[2].c_str()) - 1]);
+            }
+            for (short i = 1; i + 1 < f_vertices.size(); i++) {
+                rez->body->at(number).push_back(Triangle(f_vertices[0], f_vertices[i], f_vertices[i + 1], f_normals[0], f_normals[i], f_normals[i + 1]));
+            }
+            f_vertices.clear();
+            f_normals.clear();
         } else {
             for (short i = 1; i < vec.size(); i++) {
                 f1_str = split(vec[i], "/");
