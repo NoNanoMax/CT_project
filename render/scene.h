@@ -5,7 +5,7 @@
 Здесь обсчитывается взаимодействие лучей с фигурами b источниками света
 
 */
-#define WIDTH 2000
+#define WIDTH 1000
 #define HEIGHT 1000
 
 #include <map>
@@ -62,6 +62,7 @@ public:
     bool valid = true;
     Triangle(bool valid = true);
 	Triangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 n1, Vec3 n2, Vec3 n3);
+    Triangle(Vec3 v1, Vec3 v2, Vec3 v3);
 	bool check_intersection(Ray r);
     Vec3 get_intersection_point(Ray r);
     Vec3 get_normal(Vec3 point);

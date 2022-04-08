@@ -42,6 +42,20 @@ Triangle::Triangle(Vec3 v1, Vec3 v2, Vec3 v3, Vec3 n1, Vec3 n2, Vec3 n3):
     v0 = dot(v1, V);
 }
 
+Triangle::Triangle(Vec3 v1, Vec3 v2, Vec3 v3):
+    v1(v1), v2(v2), v3(v3) {
+    N = vv(v2 - v1, v3 - v1).normalized();
+
+    n1 = N, n2 = N, n3 = N;
+
+    D = - dot(v1, N);
+    Vec3 s1 = v2 - v1, s2 = v3 - v1;
+    U = (s1 * dot(s2, s2) - s2 * dot(s1, s2)) / (dot(s1, s1) * dot(s2, s2) - dot(s1, s2) * dot(s1, s2));
+    u0 = dot(v1, U);
+    V = (s2 * dot(s1, s1) - s1 * dot(s1, s2)) / (dot(s1, s1) * dot(s2, s2) - dot(s1, s2) * dot(s1, s2));
+    v0 = dot(v1, V);
+}
+
 bool Triangle::check_intersection(Ray ray) {
     if (abs(dot(N, ray.dir)) < ZERO) return false; // проверка на параллельность
     double t = - (dot(N, ray.pos) + D) / dot(N, ray.dir);
@@ -70,10 +84,8 @@ Vec3 Triangle::get_normal(Vec3 P) {
 
 // ------------------------------- PolygonizedFigures -------------------------------
 
-PolyFigure::PolyFigure(){
-    body = new std::vector<std::vector<Triangle>>;
-}
-PolyFigure::~PolyFigure(){
+PolyFigure::PolyFigure() {}
+PolyFigure::~PolyFigure() {
     delete body;
 }
 
@@ -84,66 +96,80 @@ std::vector<std::string> split(std::string const &s, std::string delimeter = " "
         ret.push_back(s.substr(old_pos, pos - old_pos));
         pos++;
         old_pos = pos;
-        
     }
     ret.push_back(s.substr(old_pos, s.size() - pos));
     return ret;
 }
 
-PolyFigure::PolyFigure(const char* filename){
-    body = new std::vector<std::vector<Triangle>>;
-    body->push_back(std::vector<Triangle>());
-    short number = 0;
-    std::vector<Vec3> vertexes{Vec3()};
-    std::vector<Vec3> normals{Vec3()};
-    std::vector<Vec3> textures{Vec3()};
+
+#include <iostream>
+Object* PolyFigure::clone(std::vector<std::string> const &arg) {
+    assert(arg.size() >= 1);
+    PolyFigure* rez = new PolyFigure();
+
+    if (arg.size() >= 2) {
+        rez->color = Color(arg[1]);
+    }
+
+    rez->body = new std::vector<std::vector<Triangle>>;
+    rez->body->push_back(std::vector<Triangle>());
+    unsigned number = 0;
+    std::vector<Vec3> vertices, normals, textures;
 
     auto to_vec = [](std::vector<std::string> &vec) -> Vec3{
-        Vec3 v = Vec3(atof(vec[1].c_str()), atof(vec[2].c_str()), atof(vec[3].c_str()));
-        return v + Vec3(-2,5,0);
+        return Vec3(atof(vec[1].c_str()), atof(vec[2].c_str()), atof(vec[3].c_str()));
     };
 
-    auto to_tr = [&vertexes, &normals](std::vector<std::string> &vec) -> Triangle{
-        std::vector<std::string> f_1 = split(vec[1], "/");
-        std::vector<std::string>  f_2 = split(vec[2], "/");
-        std::vector<std::string>  f_3 = split(vec[3], "/");
-        return Triangle(vertexes[atoi(f_1[0].c_str())],vertexes[atoi(f_2[0].c_str())], vertexes[atoi(f_3[0].c_str())],
-                normals[atoi(f_1[2].c_str())], normals[atoi(f_2[2].c_str())], normals[atoi(f_3[2].c_str())]);
+    auto add_tr = [&vertices, &normals, rez, number](std::vector<std::string> &vec) -> void {
+        
+        std::vector<std::string> f1_str = split(vec[1], "/");
+        bool with_normals = (f1_str.size() == 1 ? 0 : 1);
+
+        std::vector<Vec3> f_vertices;
+        if (with_normals) {
+            std::vector<Vec3> f_normals;
+            // for (short i = 2; i + 1 < vec.size(); i++) {
+            //     rez->body->at(number).push_back(Triangle(vertices[atoi(f_1[0].c_str()) - 1],vertices[atoi(f_2[0].c_str()) - 1], vertices[atoi(f_3[0].c_str()) - 1],
+            //     normals[atoi(f_1[2].c_str()) - 1], normals[atoi(f_2[2].c_str()) - 1], normals[atoi(f_3[2].c_str()) - 1]));
+            // }
+        } else {
+            for (short i = 1; i < vec.size(); i++) {
+                f1_str = split(vec[i], "/");
+                f_vertices.push_back(vertices[atoi(f1_str[0].c_str()) - 1]);
+            }
+            for (auto it = f_vertices.begin() + 1; it + 1 != f_vertices.end(); it++) {
+                rez->body->at(number).push_back(Triangle(f_vertices[0], *it, *(it + 1)));
+            }
+            f_vertices.clear();
+        }
     };
 
-    std::ifstream inn(filename);
+    std::ifstream inn(arg[0].c_str());
     if(!inn){
         perror("no input file:");
     }
+    
     std::string s;
-    while(getline(inn, s)){
+    while(getline(inn, s)) {
         std::vector<std::string> args = split(s);
         if(args.empty())
             continue;
         std::string name = args[0];
-        if(name == "v") vertexes.push_back(to_vec(args));
+        if(name == "v") vertices.push_back(to_vec(args));
         else if(name == "vn") normals.push_back(to_vec(args));
         else if(name == "vt") textures.push_back(to_vec(args));
-        else if(name == "g") ++number, body->push_back(std::vector<Triangle>());
-        else if(name == "f")  (*body)[number].push_back(to_tr(args));
+        else if(name == "g") ++number, rez->body->push_back(std::vector<Triangle>());
+        else if(name == "f")  add_tr(args);
     }
-}
 
-
-Object* PolyFigure::clone(std::vector<std::string> const &arg){
-    assert(arg.size() >= 1);
-    PolyFigure* rez = new PolyFigure();
-    PolyFigure f(arg[0].c_str());
-    rez->body = f.body;
-    f.body = nullptr;
     return rez;
 }
 
-std::pair<int, std::string> PolyFigure::name() const{
+std::pair<int, std::string> PolyFigure::name() const {
     return {FIGURE, "PolyFigure"};
 }
 
-SmartPoint PolyFigure::get_intersection_SmartPoint(Ray r){
+SmartPoint PolyFigure::get_intersection_SmartPoint(Ray r) {
     double min = INFINITY; // ищем ближайшее пересечение
     Triangle tr(false);
     Vec3 point;
@@ -168,7 +194,7 @@ SmartPoint PolyFigure::get_intersection_SmartPoint(Ray r){
 
 // ------------------------------- Sphere -------------------------------
 
-std::pair<int,std::string> Sphere::name() const{
+std::pair<int,std::string> Sphere::name() const {
     return std::pair<int,std::string>(FIGURE, "Sphere");
 }
 

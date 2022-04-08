@@ -1,6 +1,5 @@
-Camera 0 0 2 0 0 0 1.2 1000 1000 1
+Camera 0.1 0.3 0.8 0 4.41 0 1.4 500 500 1
 Ambient_light 0.3
-Point_light 0 19 10 .8
-Point_light 0 1 10 .3
-BeautifulPlane 0 0 1 -2 deep_purple metall
-BeautifulPlane 0 1 0 30 white
+Point_light 0 19 10 .5
+Point_light 0.4 0.3 0.4 .5
+PolyFigure scene_collection/prediction_13.obj white

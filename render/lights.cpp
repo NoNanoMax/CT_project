@@ -65,11 +65,12 @@ Object* Point_light::clone(std::vector<std::string> const &arg){
 }
 
 double Point_light::intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer) {
-    Ray target_ray = Ray(smartpoint.point + smartpoint.normal * ZERO, (position - smartpoint.point).normalized());
+    Vec3 dir = (position - smartpoint.point).normalized();
+    Ray target_ray = Ray(smartpoint.point + dir * ZERO, dir);
     SmartPoint res = get_first_SmartPoint(target_ray, figures_pointer);
 
     if (!res.valid || ((position - smartpoint.point).abs() < (res.point - smartpoint.point).abs())) {
-        double ret = - cos(smartpoint.point - position, smartpoint.normal) * intensity;
+        double ret = abs(cos(smartpoint.point - position, smartpoint.normal) * intensity);
         return (ret > 0 ? ret : 0);
     }
 
