@@ -5,8 +5,8 @@
 Здесь обсчитывается взаимодействие лучей с фигурами b источниками света
 
 */
-#define WIDTH 1000
-#define HEIGHT 1000
+#define WIDTH 100
+#define HEIGHT 100
 
 #include <map>
 #include <fstream>
@@ -16,7 +16,7 @@
 #include "constants.h"
 #include <vector>
 #include <stdlib.h>
-
+#include <cassert>
 
 enum types{CAMERA, LIGHT, FIGURE};
 

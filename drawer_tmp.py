@@ -1,9 +1,12 @@
+from cmath import pi
 from typing import Union, Any
 
 import numpy as np
 from matplotlib import pyplot as plt
 import sys
 from subprocess import Popen, PIPE
+
+from sympy import vring
 
 def useless_func():
     a = np.random.randn(256, 256, 3)
@@ -13,6 +16,16 @@ def useless_func():
     plt.axis(False)
     plt.show()
 
+def brightness_normalise(arr, out, H, W):
+    arr /= np.percentile(np.array(out[3:], dtype='float'),  99.95)
+    for i in range(0, H):
+        for j in range(0, W):
+            arr[i][j][0] = min(arr[i][j][0], 1)
+            arr[i][j][1] = min(arr[i][j][1], 1)
+            arr[i][j][2] = min(arr[i][j][2], 1)
+    return arr
+
+
 def draw_men_with_dumplings_lol(PATH=None):
     '''
         input: (C, H, W) matrix
@@ -21,8 +34,14 @@ def draw_men_with_dumplings_lol(PATH=None):
         sub_proc = Popen(["./run"], stdout=PIPE, universal_newlines=True)
     (out, _) = sub_proc.communicate()
     out = out.strip().split()
+    
     H, W, C = int(out[0]), int(out[1]), int(out[2])
-    picture = np.array(out[3:], dtype=float).reshape((H, W, C)) / 255
+
+    picture = np.array(out[3:], dtype='float').reshape(H, W, C)
+
+    picture = brightness_normalise(picture, out, H, W)
+
+
     plt.axis(False)
     plt.imshow(picture)
     plt.savefig('scene.png', dpi = 300)

@@ -242,9 +242,9 @@ void Scene::trace_ray(Ray ray) {
         double g = res[ray.x][ray.y].g + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.g;
         double b = res[ray.x][ray.y].b + ray.intensity * intersetion_SmartPoint.material.t_diffusion * light * color.b;
         
-        if (r > 255) r = 255;
-        if (g > 255) g = 255;
-        if (b > 255) b = 255;
+        // if (r > 255) r = 255;
+        // if (g > 255) g = 255;
+        // if (b > 255) b = 255;
         res[ray.x][ray.y] = Color(r, g, b);
         
         trace_ray(reflected_ray(intersetion_SmartPoint, ray));
