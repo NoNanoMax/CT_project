@@ -10,7 +10,7 @@ import numpy as np
         super(Picture, self).__init__()
         self.figure = Figure(figsize=(5, 3))
         self.canvas = FigureCanvas(self.figure)
-        self.ax = self.figure.subplots()
+        self.ax = self.figure.  lots()
         self.pic = pic
         self.ax.imshow(self.pic)
         self.ax.set_axis_off()
