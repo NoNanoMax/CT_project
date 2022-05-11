@@ -17,7 +17,10 @@ def useless_func():
     plt.show()
 
 def brightness_normalise(arr, out, H, W):
-    arr /= np.percentile(np.array(out[3:], dtype='float'),  99.95)
+    norm = 1
+    if np.percentile(np.array(out[3:], dtype='float'),  99.95) != 0:
+        norm = np.percentile(np.array(out[3:], dtype='float'),  99.95)
+    arr /= norm
     for i in range(0, H):
         for j in range(0, W):
             arr[i][j][0] = min(arr[i][j][0], 1)

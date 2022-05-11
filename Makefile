@@ -1,7 +1,7 @@
 all: run
 
 run: main.o linal.o scene.o figures.o lights.o material.o 
-	c++ --std=c++11 main.o linal.o scene.o figures.o lights.o material.o  -o run
+	c++ --std=c++11 main.o linal.o scene.o figures.o lights.o material.o -lpthread -o run
 
 
 main.o: main.cpp
@@ -14,7 +14,7 @@ material.o: render/material/material.cpp
 	c++ --std=c++11 render/material/material.cpp -c -O2
 
 scene.o: render/scene.cpp
-	c++ --std=c++11 render/scene.cpp -c -O2
+	c++ --std=c++11 render/scene.cpp -c -O2 -lpthread
 
 figures.o: render/figures.cpp
 	c++ --std=c++11 render/figures.cpp -c -O2

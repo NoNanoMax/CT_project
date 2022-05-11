@@ -65,3 +65,8 @@ public:
 
 Vec3 dot(Matr3 m, Vec3 v);
 
+template<typename T>
+T min(T a, T b);
+
+template<typename T>
+T max(T a, T b);

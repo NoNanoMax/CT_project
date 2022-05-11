@@ -5,7 +5,7 @@
 Программный файл для работы сцены
 
 */
-
+#include <thread>
 #include <vector>
 #include "math.h"
 #include "scene.h"
@@ -158,7 +158,7 @@ void Scene::initialization(const char * input) {
     std::string s;
     while (getline(inn, s)) {
         auto args = split(s);
-        assert(!args.empty());
+        if(args.empty()) continue;
         std::string name = args[0];
         args.erase(args.begin());
         auto it = factory.find(name);
@@ -252,7 +252,13 @@ void Scene::trace_ray(Ray ray) {
     }
 }
 
-void Scene::render() {
+void Scene::parallel_trace_ray(Ray * it, int times){
+    for( ;times > 0; ++it, --times){
+        trace_ray(*it);
+    }
+}
+
+void Scene::render(int thread_count) {
     std::vector<Ray> rays = camera->create_rays();
     int height =  camera->height();
     int width = camera->width();
@@ -260,7 +266,27 @@ void Scene::render() {
      for (short i = 0; i < width; i++) {
          res[i] = new Color[height];
     }
-    for (std::vector<Ray>::iterator it = rays.begin(); it != rays.end(); it++) {
-        trace_ray(*it);
+
+    int rays_count = rays.size();
+    int for_thread = rays_count/thread_count;
+    int begin = 0;
+    int end = for_thread;
+
+    std::thread ** threads = new std::thread*[thread_count];
+    for(int i = 0; i < thread_count; ++i){
+        threads[i] = new std::thread(&Scene::parallel_trace_ray, this, &rays[begin], end - begin);
+        begin = end;
+        end = for_thread + end > rays_count ? rays_count : for_thread + end;
     }
+    
+    for(int i = 0; i < thread_count; ++i){
+        threads[i]->join();
+    }
+
+    for(int i = 0; i < thread_count; ++i){
+        delete threads[i];
+    }
+
+    delete[] threads;
+
 }

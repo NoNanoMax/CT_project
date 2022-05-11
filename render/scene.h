@@ -92,8 +92,20 @@ public:
     SmartPoint get_intersection_SmartPoint(Ray r);
 };
 
+class Bounded_box{
+    Vec3 left, right; // в left хранятся минимальные координаты по осям, в right - максимальные
+public:
+    Bounded_box(Vec3 l, Vec3 r);
+    Bounded_box();
+    bool is_intersect(Ray ray);
+    void print(){
+        printf("%lf %lf %lf : %lf %lf %lf\n", left.x, left.y, left.z, right.x, right.y, right.z);
+    }
+};
+
 // полигональные фигуры использующие формат .obj
 class PolyFigure : public Figure, public Object{
+    Bounded_box box;
     std::vector<std::vector<Triangle>> *body;
     Color color = Color(255, 255, 255);;
     Material material = Material("dielectric");
@@ -218,10 +230,11 @@ public:
     void initialization(const char * input);
 
     // calculates everything
-    void render();
+    void render(int thread_count = PARALLEL_COUNT);
     
     // inner methods
     void trace_ray(Ray ray);
+    void parallel_trace_ray(Ray* it, int times);
     double full_intensity_in_point(SmartPoint smartpoint, std::vector<Figure*>* figures_pointer);
     SmartPoint get_first_SmartPoint(Ray ray);
 };

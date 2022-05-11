@@ -10,6 +10,17 @@
 #include "math.h"
 #include <vector>
 
+template<typename T>
+T min(T a, T b){
+    return a > b ? b : a;
+}
+
+template<typename T>
+T max(T a, T b){
+    return a > b ? a : b;
+}
+
+
 // ------------------------------- Figures -------------------------------
 
 SmartPoint::SmartPoint(bool valid): valid(valid) { };
@@ -84,6 +95,30 @@ Vec3 Triangle::get_normal(Vec3 P) {
 
 // ------------------------------- PolygonizedFigures -------------------------------
 
+
+Bounded_box::Bounded_box(): left({0, 0, 0}), right({0, 0, 0}){}
+Bounded_box::Bounded_box(Vec3 l, Vec3 r): left({min(l[0], r[0]) ,min(l[1], r[1]) ,min(l[2], r[2]) }),
+                                         right({max(l[0], r[0]) ,max(l[1], r[1]) ,max(l[2], r[2]) }){
+                                         }
+
+bool Bounded_box::is_intersect(Ray ray){
+    std::vector<Vec3> N({ // нормаль и D из уравнения плоскости
+       { -1,0 ,0 }, {1 ,0 ,0 }, {0 ,-1 ,0 }, {0 ,1 ,0 }, {0 ,0 ,-1 }, {0 ,0 ,1 }});
+    std::vector<double> D({left[0], -right[0], left[1], -right[1], left[2], -right[2]});
+    for(int i = 0; i < 6; ++i){ 
+        if (abs(dot(N[i], ray.dir)) < ZERO) continue;
+        double t = - (dot(N[i], ray.pos) + D[i]) / dot(N[i], ray.dir);
+        if(t < 0) continue;
+        Vec3 P = ray.pos + ray.dir * t;
+        if( // проверяем проекции на плоскости
+            (P[0] >= left[0] and P[0] <= right[0] and P[1] >= left[1] and P[1] <= right[1]) or
+            (P[2] >= left[2] and P[2] <= right[2] and P[1] >= left[1] and P[1] <= right[1]) or
+            (P[0] >= left[0] and P[0] <= right[0] and P[2] >= left[2] and P[2] <= right[2])
+        ) return true;
+    }
+    return false;
+}
+
 PolyFigure::PolyFigure() {}
 PolyFigure::~PolyFigure() {
     delete body;
@@ -102,8 +137,10 @@ std::vector<std::string> split(std::string const &s, std::string delimeter = " "
 }
 
 
-#include <iostream>
 Object* PolyFigure::clone(std::vector<std::string> const &arg) {
+
+    Vec3 left({INFTY,INFTY,INFTY}), right({-INFTY, -INFTY, -INFTY});
+
     assert(arg.size() >= 1);
     PolyFigure* rez = new PolyFigure();
 
@@ -163,13 +200,18 @@ Object* PolyFigure::clone(std::vector<std::string> const &arg) {
         if(args.empty())
             continue;
         std::string name = args[0];
-        if(name == "v") vertices.push_back(to_vec(args));
+        if(name == "v"){
+            Vec3 tmp = to_vec(args);
+            left = {min(left[0], tmp[0]) ,min(left[1], tmp[1]) ,min(left[2], tmp[2]) };
+            right = {max(right[0], tmp[0]) ,max(right[1], tmp[1]) ,max(right[2], tmp[2]) };
+            vertices.push_back(tmp);
+        }
         else if(name == "vn") normals.push_back(to_vec(args));
         else if(name == "vt") textures.push_back(to_vec(args));
         else if(name == "g") ++number, rez->body->push_back(std::vector<Triangle>());
         else if(name == "f")  add_tr(args);
     }
-
+    rez->box = Bounded_box(left, right);
     return rez;
 }
 
@@ -180,6 +222,7 @@ std::pair<int, std::string> PolyFigure::name() const {
 SmartPoint PolyFigure::get_intersection_SmartPoint(Ray r) {
     double min = INFINITY; // ищем ближайшее пересечение
     Triangle tr(false);
+    if(box.is_intersect(r) == false) return SmartPoint(false);
     Vec3 point;
     Vec3 tmp;
     for(std::vector<Triangle>& bod : *body){
