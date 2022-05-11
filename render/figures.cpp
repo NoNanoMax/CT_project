@@ -211,6 +211,7 @@ Object* PolyFigure::clone(std::vector<std::string> const &arg) {
         else if(name == "g") ++number, rez->body->push_back(std::vector<Triangle>());
         else if(name == "f")  add_tr(args);
     }
+   
     rez->box = Bounded_box(left, right);
     return rez;
 }

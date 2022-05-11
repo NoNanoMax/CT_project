@@ -1,4 +1,4 @@
-Camera -500 100 250 0 -1.57 -1.57 1.4 1000 1000 1
+Camera -500 100 250 0 -1.57 -1.57 1.4 500 500 1
 Ambient_light 0.3
 Point_light -200 200 100 4
-PolyFigure scene_collection/T-Rex/T-Rex_Model.obj white
+PolyFigure scene_collection/T-Rex/T-Rex_Model.obj red
