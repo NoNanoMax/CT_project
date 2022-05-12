@@ -107,6 +107,14 @@ std::vector<Ray> Camera::create_rays() {
     this->angles[1] = asin(max_x.z/max_x.abs());
     max_x.z = 0;
     this->angles[0] = -asin(max_x.x/max_x.abs());
+    if (max_x.y < 0) {
+        if (this->angles[0] < 0) {
+            this->angles[0] = -3.14 - this->angles[0];
+        }
+        else {
+            this->angles[0] = 3.14 - this->angles[0];
+        }
+    }
     this->angles[2] = 0;
     rotate = calculate_rotate();
 
