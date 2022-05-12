@@ -25,8 +25,31 @@ Matr3 Camera::calculate_rotate() {
     return a * b * c;
 }
 
+
+Ray Camera::alt_calculate_ray(unsigned x, unsigned y) {
+    // if (x == 0 and y == 0) {   
+    //     Vec3 max_x = Vec3(angles[0], angles[1], angles[2]);
+    //     if (max_x.abs() == 0) max_x = Vec3(1, 0, 0);
+                
+    //     this->angles[1] = asin(max_x.z/max_x.abs());
+    //     max_x.z = 0;
+    //     this->angles[0] = -asin(max_x.x/max_x.abs());
+    //     this->angles[2] = 0;
+    //     this->calculate_rotate();
+    //     // printf("%f %f %f\n", angles[0], angles[1], angles[2]);
+    //     // getchar();
+    // }
+
+
+    Vec3 point(2 * tan(FOV_X / 2) * (x * 1.0 / X - 0.5), 1, 2 * tan(FOV_Y / 2) * (y * 1.0 / Y - 0.5));
+    Vec3 screen_point = point + position;
+    Vec3 direction(rotate * point);
+    return Ray(position, direction.normalized(), x, y, 1);
+}
+
+
 Ray Camera::calculate_ray(unsigned x, unsigned y) {
-    if (i_am_fish) {
+    if (i_am_fish == 1) {
         double alpha = FOV_X * (x * 1.0 / X - 0.5);
         double beta = FOV_Y * (y * 1.0 / Y - 0.5);
         Vec3 point(cos(beta) * sin(alpha), cos(beta) * cos(alpha), sin(beta));
@@ -77,9 +100,19 @@ int Camera::width() const{
 //res Ray[Width * Hight]
 std::vector<Ray> Camera::create_rays() {
     std::vector<Ray> ret;
+
+    Vec3 max_x = Vec3(angles[0], angles[1], angles[2]);
+    if (max_x.abs() == 0) max_x = Vec3(0, 1, 0);
+                
+    this->angles[1] = asin(max_x.z/max_x.abs());
+    max_x.z = 0;
+    this->angles[0] = -asin(max_x.x/max_x.abs());
+    this->angles[2] = 0;
+    rotate = calculate_rotate();
+
     for (unsigned x = 0; x < X; x++) {
         for (unsigned y = 0; y < Y; y++) {
-            ret.push_back(calculate_ray(x, y));
+            ret.push_back(alt_calculate_ray(x, y));
         }
     }
     return ret;

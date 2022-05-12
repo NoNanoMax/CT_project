@@ -200,6 +200,7 @@ class Camera: public Object {
     bool i_am_fish = 0;
     Matr3 calculate_rotate();
     Ray calculate_ray(unsigned x, unsigned y);
+    Ray alt_calculate_ray(unsigned x, unsigned y);
 public:
     int height() const;
     int width() const;
@@ -208,6 +209,7 @@ public:
     Camera(); // пустой конструктор (источник в начале координат, углы нулевые, расстояние, ширина, высота единицы)
     Camera(Vec3 position, Vec3 angels, double FOV_X, int X, int Y, bool i_am_fish = 0);
     std::vector<Ray> create_rays(); // генерация лучей
+    
 };
 
 // ------------------------------- scene -------------------------------

@@ -35,7 +35,7 @@
         Point_light x, y, z, intensity
         Ambient_light intensity
 ## Инициализация камеры ##
-        Camera Vec3 pos, Vec3 angles, FOV, Width, Hight, i_am_fish
+        Camera Vec3 pos, Vec3 direction, FOV, Width, Hight, i_am_fish
 ## C++: реализация библиотеки ##
     main.cpp:
         r.initialization("tmp_info.ass");

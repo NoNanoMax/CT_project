@@ -1,4 +1,8 @@
-Camera -500 100 250 0 -1.57 -1.57 1.4 500 500 1
+Camera 100 -330 280 -0.8 1 0 1.2 200 200 0
 Ambient_light 0.3
-Point_light -200 200 100 4
+Point_light 50 -200 400 .8
+Point_light 0 1 10 .3
+BeautifulPlane 0 0 1 -2 deep_purple
+BeautifulPlane 0 -1 0 -1000 white
 PolyFigure scene_collection/T-Rex/T-Rex_Model.obj red
+BeautifulSphere 70 -295 280 5 blue glass
