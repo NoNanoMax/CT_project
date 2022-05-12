@@ -23,6 +23,52 @@
 
 ----
 ## C++: реализация библиотеки ##
+    Фигуры:
+        BeautifulSphere x, y, z, R, (color), (material)
+        BeautifulPlane a, b, c, d, (color), (material)
+        Tetraedr x, y, z, (color), (material)
+        Tetraedr x, y, z, V1, V2, V3, (color), (material)
+        Sphere x, y, z, R, (color), (material), (quality)
+        PolyFigure PATH, (color)
+    Свет:
+        Directed_light x, y, z, intensity
+        Point_light x, y, z, intensity
+        Ambient_light intensity
+    Камера:
+        Camera Vec3 pos, Vec3 angles, FOV, Width, Hight, i_am_fish
+
+
+Порядок работы:
+    main.cpp:
+        r.initialization("tmp_info.ass");
+        Создание сцены и добавление на нее всех объектов из файла
+
+        r.render();
+        Запускает процесс обработки лучей
+
+        Выводит массив цветов экрана для считывания и отрисовки в питоне
+
+    scene.cpp:
+        Scene::initialization() реализация
+        
+        Scene::render(int thread_count = 8)
+            camera->create_rays();
+            генерирует лучи для заданных настроек камеры
+
+            Создает и запускает потоки по функции Scene::parallel_trace_ray
+        
+        Scene::parallel_trace_ray:
+            trace_ray(Ray x);
+
+        trace_ray(Ray x):
+            full_intensity_in_point()
+            считает полную освещенность в точки первого пересечения луча
+
+            trace_ray(reflected_ray(intersetion_SmartPoint, ray));
+            trace_ray(refracted_ray(intersetion_SmartPoint, ray));
+            Рекурсивный запуск отраженного и преломленного лучей из точки пересечения
+
+
 
 ----
 ## Python: интерфейс ##
