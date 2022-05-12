@@ -22,23 +22,21 @@
 ![вставить своего динозавра](https://github.com/NoNanoMax/CT_project/blob/dev/pictures/ex3.jpg)
 
 ----
-## C++: реализация библиотеки ##
-    Фигуры:
+
+## Описание фигур ##
         BeautifulSphere x, y, z, R, (color), (material)
         BeautifulPlane a, b, c, d, (color), (material)
         Tetraedr x, y, z, (color), (material)
         Tetraedr x, y, z, V1, V2, V3, (color), (material)
         Sphere x, y, z, R, (color), (material), (quality)
         PolyFigure PATH, (color)
-    Свет:
+## Истчники света ##
         Directed_light x, y, z, intensity
         Point_light x, y, z, intensity
         Ambient_light intensity
-    Камера:
+## Инициализация камеры ##
         Camera Vec3 pos, Vec3 angles, FOV, Width, Hight, i_am_fish
-
-
-Порядок работы:
+## C++: реализация библиотеки ##
     main.cpp:
         r.initialization("tmp_info.ass");
         Создание сцены и добавление на нее всех объектов из файла
