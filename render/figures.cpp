@@ -9,6 +9,8 @@
 #include "scene.h"
 #include "math.h"
 #include <vector>
+#include <errno.h>
+#include <string.h>
 
 template<typename T>
 T min(T a, T b){
@@ -140,13 +142,24 @@ std::vector<std::string> split(std::string const &s, std::string delimeter = " "
 Object* PolyFigure::clone(std::vector<std::string> const &arg) {
 
     Vec3 left({INFTY,INFTY,INFTY}), right({-INFTY, -INFTY, -INFTY});
-
-    assert(arg.size() >= 1);
+    Vec3 offset = {0, 0, 0};
+    double size = 1;
     PolyFigure* rez = new PolyFigure();
-
-    if (arg.size() >= 2) {
+    if(arg.size() < 1){
+        delete rez;
+        throw("недостаточно аргументов");
+    } else if (arg.size() == 2) {
         rez->color = Color(arg[1]);
+    } else if (arg.size() == 6) {
+        offset = {atof(arg[1].c_str()), atof(arg[2].c_str()), atof(arg[3].c_str())};
+        size = atof(arg[4].c_str());
+        rez->color = Color(arg[5]);
+    } else{
+        delete rez;
+        throw("такое количество аргументов не предусмотрено");
     }
+
+
 
     rez->body = new std::vector<std::vector<Triangle>>;
     rez->body->push_back(std::vector<Triangle>());
@@ -191,25 +204,32 @@ Object* PolyFigure::clone(std::vector<std::string> const &arg) {
 
     std::ifstream inn(arg[0].c_str());
     if(!inn){
-        perror("no input file:");
+        delete rez;
+        throw("no input file");
     }
     
     std::string s;
-    while(getline(inn, s)) {
-        std::vector<std::string> args = split(s);
-        if(args.empty())
-            continue;
-        std::string name = args[0];
-        if(name == "v"){
-            Vec3 tmp = to_vec(args);
-            left = {min(left[0], tmp[0]) ,min(left[1], tmp[1]) ,min(left[2], tmp[2]) };
-            right = {max(right[0], tmp[0]) ,max(right[1], tmp[1]) ,max(right[2], tmp[2]) };
-            vertices.push_back(tmp);
+
+    try{
+        while(getline(inn, s)) {
+            std::vector<std::string> args = split(s);
+            if(args.empty())
+                continue;
+            std::string name = args[0];
+            if(name == "v"){
+                Vec3 tmp = offset + size * to_vec(args);
+                left = {min(left[0], tmp[0]) ,min(left[1], tmp[1]) ,min(left[2], tmp[2]) };
+                right = {max(right[0], tmp[0]) ,max(right[1], tmp[1]) ,max(right[2], tmp[2]) };
+                vertices.push_back(tmp);
+            }
+            else if(name == "vn") normals.push_back(to_vec(args));
+            else if(name == "vt") textures.push_back(to_vec(args));
+            else if(name == "g") ++number, rez->body->push_back(std::vector<Triangle>());
+            else if(name == "f")  add_tr(args);
         }
-        else if(name == "vn") normals.push_back(to_vec(args));
-        else if(name == "vt") textures.push_back(to_vec(args));
-        else if(name == "g") ++number, rez->body->push_back(std::vector<Triangle>());
-        else if(name == "f")  add_tr(args);
+    } catch(...){
+        delete rez;
+        throw(strerror(errno));
     }
    
     rez->box = Bounded_box(left, right);
@@ -274,8 +294,11 @@ SmartPoint Sphere::get_intersection_SmartPoint(Ray r) {
 }
 
 Object* Sphere::clone(std::vector<std::string> const & arg) {
-    assert(arg.size() >= 4);
+    if(arg.size() < 4){
+        throw("недостаточно аргументов");
+    }
     Sphere* rez = new Sphere();
+
     Vec3 center =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
     double radius = atof(arg[3].c_str());
     rez->radius = radius;
@@ -341,7 +364,9 @@ SmartPoint Tetraedr::get_intersection_SmartPoint(Ray r) {
 
 // v1.x v1.y v1.z [ v2.x v2.y v2.z v3.x v3.y v3.z v4.x v4.y v4.z ]
 Object* Tetraedr::clone(std::vector<std::string> const & arg) {
-    assert(arg.size() >= 3);
+    if(arg.size() < 3){
+        throw("недостаточно аргументов");
+    }
     Tetraedr* rez = new Tetraedr();
     Vec3 pos =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
     Vec3 a(-2, 1, -2);
@@ -381,7 +406,9 @@ Object* Tetraedr::clone(std::vector<std::string> const & arg) {
 // ------------------------------- BeautifulSphere -------------------------------
 
 Object* BeautifulSphere::clone(std::vector<std::string> const &arg) {
-    assert(arg.size() >= 4);
+    if(arg.size() < 4){
+        throw("недостаточно аргументов");
+    }
     BeautifulSphere* rez = new BeautifulSphere();
     rez->position =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str()));
     rez->radius = atof(arg[3].c_str());
@@ -425,7 +452,9 @@ std::pair<int,std::string> BeautifulPlane::name() const {
 }
 
 Object* BeautifulPlane::clone(std::vector<std::string> const &arg) {
-    assert(arg.size() >= 4);
+    if(arg.size() < 4){
+        throw("недостаточно аргументов");
+    }
     BeautifulPlane* rez = new BeautifulPlane();
     rez->normal =  Vec3(atof(arg[0].c_str()),atof(arg[1].c_str()),atof(arg[2].c_str())).normalized();
     rez->d = atof(arg[3].c_str());

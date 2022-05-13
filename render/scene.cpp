@@ -7,6 +7,9 @@
 */
 #include <thread>
 #include <vector>
+#include <stdexcept>
+#include <errno.h>
+#include <string.h>
 #include "math.h"
 #include "scene.h"
 
@@ -128,7 +131,9 @@ std::vector<Ray> Camera::create_rays() {
 
 Object* Camera::clone(std::vector<std::string> const & arg){
    // Vec3 position, Vec3 angles, double distance, double width, double height
-    assert(arg.size() >= 10);
+   if(arg.size() < 10){
+       throw("недостаточно аргументов");
+   }
     Camera* rez = new Camera(
         Vec3(atof(arg[0].c_str()), atof(arg[1].c_str()), atof(arg[2].c_str())),
         Vec3(atof(arg[3].c_str()), atof(arg[4].c_str()), atof(arg[5].c_str())),
@@ -187,6 +192,7 @@ void Scene::initialization(const char * input) {
         new Sphere(), new Tetraedr(), new PolyFigure()
     };
 
+
     for (auto obj : zigotes) {
         std::pair<int,std::string> tmp = obj->name();
         factory[tmp.second] = std::pair<int,Object*>(tmp.first, obj);
@@ -194,9 +200,11 @@ void Scene::initialization(const char * input) {
 
     std::ifstream inn(input);
     if (!inn) {
-        perror("no input file:");
+        throw("входной файл не открылся");
     }
+
     std::string s;
+    Object * ptr;
     while (getline(inn, s)) {
         auto args = split(s);
         if(args.empty()) continue;
@@ -204,7 +212,16 @@ void Scene::initialization(const char * input) {
         args.erase(args.begin());
         auto it = factory.find(name);
         if (it == factory.end()) continue;
-        Object * ptr = (it->second).second->clone(args);
+        try{
+            ptr = (it->second).second->clone(args);
+        } catch(std::string err_st){
+            fprintf(stderr, "ошибка при создании объекта с параметрами \"%s\": \n   %s\n", s.c_str(), err_st.c_str());
+            continue;
+        }catch(...){
+            fprintf(stderr, "ошибка при создании объекта с параметрами \"%s\": \n %s\n", s.c_str(), strerror(errno));
+            continue;
+        }
+        
         switch ((it->second).first) {
             case CAMERA:
             if(camera) delete camera;
@@ -295,7 +312,14 @@ void Scene::trace_ray(Ray ray) {
 
 void Scene::parallel_trace_ray(Ray * it, int times){
     for( ;times > 0; ++it, --times){
+        try{
         trace_ray(*it);
+        } catch(std::string err_str){
+            fprintf(stderr, "проблемы с обработкой пикселя %d %d:\n     %s\n", it->x, it->y, err_str.c_str());
+        } catch(...){
+            fprintf(stderr, "проблемы с обработкой пикселя:\n     %s\n", strerror(errno));
+        }
+
     }
 }
 
@@ -314,14 +338,24 @@ void Scene::render(int thread_count) {
     int end = for_thread;
 
     std::thread ** threads = new std::thread*[thread_count];
+
+    
     for(int i = 0; i < thread_count; ++i){
+        try{
         threads[i] = new std::thread(&Scene::parallel_trace_ray, this, &rays[begin], end - begin);
+        } catch(...){
+            fprintf(stderr, "%d поток не создался. Номер ошибки %s\n", i, strerror(errno));
+        }
         begin = end;
         end = for_thread + end > rays_count ? rays_count : for_thread + end;
     }
     
     for(int i = 0; i < thread_count; ++i){
+        try{
         threads[i]->join();
+        } catch(...){
+            fprintf(stderr, "%d проблема с потоком. Номер ошибки %s\n", i, strerror(errno));
+        }
     }
 
     for(int i = 0; i < thread_count; ++i){
@@ -329,5 +363,5 @@ void Scene::render(int thread_count) {
     }
 
     delete[] threads;
-
+    return;
 }

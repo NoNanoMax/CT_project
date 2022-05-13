@@ -8,13 +8,32 @@
 
 #include "render/scene.h"
 #include "stdio.h"
+#include <errno.h>
+#include <string.h>
 #include <vector>
+#include <stdexcept>
 
 int main() {
     Scene r;
-    r.initialization("tmp_info.ass");
-    r.render();
-
+    try{
+        r.initialization("tmp_info.ass");
+    } catch(std::string err_st){
+        fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", err_st.c_str());
+        return 0;
+    } catch(...){
+        fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", strerror(errno));
+        return 0;
+    }
+    try{
+        r.render();
+    } catch(std::string err_st){
+        fprintf(stderr, "ошибка при отрисовке сцены: %s\n", err_st.c_str());
+        return 0;
+    } catch(...){
+        fprintf(stderr, "ошибка при отрисовке сцены:\n    %s\n", strerror(errno));
+        return 0;
+    }
+    
     Color** res = r.get_res();
     int height =  r.get_camera()->height();
     int width = r.get_camera()->width();

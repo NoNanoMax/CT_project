@@ -4,5 +4,5 @@ Point_light -6 20 6 .1
 Point_light 0 1 10 .3
 BeautifulPlane 0 0 1 -30 deep_purple
 BeautifulPlane 0 -1 0 -1000 white
-PolyFigure scene_collection/sofa/Koltuk.obj red
+PolyFigure scene_collection/sofa/Koltuk.obj 1 -1 1 2 red
 BeautifulSphere 70 -295 280 5 blue glass
