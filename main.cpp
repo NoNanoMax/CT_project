@@ -17,8 +17,8 @@ int main() {
     Scene r;
     try{
         r.initialization("info.ass");
-    } catch(std::string err_st){
-        fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", err_st.c_str());
+    } catch(const char* err_st){
+        fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", err_st);
         return 0;
     } catch(...){
         fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", strerror(errno));
@@ -26,8 +26,8 @@ int main() {
     }
     try{
         r.render();
-    } catch(std::string err_st){
-        fprintf(stderr, "ошибка при отрисовке сцены: %s\n", err_st.c_str());
+    } catch(const char* err_st){
+        fprintf(stderr, "ошибка при отрисовке сцены: %s\n", err_st);
         return 0;
     } catch(...){
         fprintf(stderr, "ошибка при отрисовке сцены:\n    %s\n", strerror(errno));
