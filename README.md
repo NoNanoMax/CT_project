@@ -19,7 +19,7 @@
 
 ![](https://github.com/NoNanoMax/CT_project/blob/dev/pictures/ex1.jpg)
 ![](https://github.com/NoNanoMax/CT_project/blob/dev/pictures/ex2.jpg)
-![вставить своего динозавра](https://github.com/NoNanoMax/CT_project/blob/dev/pictures/ex3.jpg)
+![](https://github.com/NoNanoMax/CT_project/blob/main/pictures/ex6.jpg)
 
 ----
 
@@ -38,7 +38,7 @@
         Camera Vec3 pos, Vec3 angles, FOV, Width, Hight, i_am_fish
 ## C++: реализация библиотеки ##
     main.cpp:
-        r.initialization("tmp_info.ass");
+        r.initialization("info.ass");
         Создание сцены и добавление на нее всех объектов из файла
 
         r.render();
