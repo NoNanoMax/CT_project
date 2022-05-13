@@ -34,7 +34,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.label_2.setText("Введенные данные")
         self.ui.pushButton_2.setText("Нарисовать")
         self.ui.pushButton_3.setText("Очистить")
-        self.ui.pushButton_6.setText("Изменить объект №") # <======
+        #self.ui.pushButton_6.setText("Изменить\n объект №") # <======
         self.ui.label_9.setText("Имя файла")
         self.ui.pushButton_4.setText("Загрузить сцену")
         self.ui.pushButton_5.setText("Сохранить сцену")
@@ -44,7 +44,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_3.clicked.connect(self.hide)
         self.ui.pushButton_4.clicked.connect(self.OpenFile)
         self.ui.pushButton_5.clicked.connect(self.SaveFile)
-        self.ui.pushButton_6.clicked.connect(self.Change) # <======
+        #self.ui.pushButton_6.clicked.connect(self.Change) # <======
 
         self.figures = []
         self.to_put = ""
@@ -81,11 +81,14 @@ class mywindow(QtWidgets.QMainWindow):
     def draw(self):
         f = open("info.ass", "w")
         if self.to_put.find("Camera") == -1:
-            f.write("Camera 0 0 2 0 0 0 1.2 1000 1000 1\n")
+            f.write("Camera 0 0 4 0 0 0 1.2 1000 1000 1\n")
         f.write(self.to_put)
         f.close()
         draw_men_with_dumplings_lol()
         os.remove("info.ass")
+
+    def Change(self):
+        return
 
     def hide(self):
         self.hide_all()

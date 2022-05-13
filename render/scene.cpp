@@ -50,7 +50,6 @@ Ray Camera::alt_calculate_ray(unsigned x, unsigned y) {
     return Ray(position, direction.normalized(), x, y, 1);
 }
 
-
 Ray Camera::calculate_ray(unsigned x, unsigned y) {
     if (i_am_fish == 1) {
         double alpha = FOV_X * (x * 1.0 / X - 0.5);
@@ -104,26 +103,26 @@ int Camera::width() const{
 std::vector<Ray> Camera::create_rays() {
     std::vector<Ray> ret;
 
-    Vec3 max_x = Vec3(angles[0], angles[1], angles[2]);
-    if (max_x.abs() == 0) max_x = Vec3(0, 1, 0);
+    // Vec3 max_x = Vec3(angles[0], angles[1], angles[2]);
+    // if (max_x.abs() == 0) max_x = Vec3(0, 1, 0);
                 
-    this->angles[1] = asin(max_x.z/max_x.abs());
-    max_x.z = 0;
-    this->angles[0] = -asin(max_x.x/max_x.abs());
-    if (max_x.y < 0) {
-        if (this->angles[0] < 0) {
-            this->angles[0] = -3.14 - this->angles[0];
-        }
-        else {
-            this->angles[0] = 3.14 - this->angles[0];
-        }
-    }
-    this->angles[2] = 0;
-    rotate = calculate_rotate();
+    //this->angles[1] = asin(max_x.z/max_x.abs());
+    // max_x.z = 0;
+    //this->angles[0] = -asin(max_x.x/max_x.abs());
+    // if (max_x.y < 0) {
+    //     if (this->angles[0] < 0) {
+    //         this->angles[0] = -3.14 - this->angles[0];
+    //     }
+    //     else {
+    //         this->angles[0] = 3.14 - this->angles[0];
+    //     }
+    // }
+    // this->angles[2] = 0;
+    // rotate = calculate_rotate();
 
     for (unsigned x = 0; x < X; x++) {
         for (unsigned y = 0; y < Y; y++) {
-            ret.push_back(alt_calculate_ray(x, y));
+            ret.push_back(calculate_ray(x, y));
         }
     }
     return ret;

@@ -82,6 +82,15 @@ class Ui_MainWindow(object):
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(580, 550, 241, 51))
         self.pushButton_5.setObjectName("pushButton_5")
+
+        #self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget) # <====
+        #self.pushButton_6.setGeometry(QtCore.QRect(300, 405, 120, 50)) # <====
+        #self.pushButton_6.setObjectName("pushButton_5") # <====
+        #self.lineEdit_8 = QtWidgets.QLineEdit(self.centralwidget) # <====
+        #self.lineEdit_8.setGeometry(QtCore.QRect(420, 425, 80, 25)) # <====
+        #self.lineEdit_8.setObjectName("lineEdit_8") # <====
+
+
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(420, 110, 411, 241))
         self.scrollArea.setWidgetResizable(True)
