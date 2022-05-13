@@ -29,7 +29,7 @@
         Tetraedr x, y, z, (color), (material)
         Tetraedr x, y, z, V1, V2, V3, (color), (material)
         Sphere x, y, z, R, (color), (material), (quality)
-        PolyFigure PATH, (color)
+        PolyFigure PATH, (offset, homotetia_coeff), (color)
 ## Истчники света ##
         Directed_light x, y, z, intensity
         Point_light x, y, z, intensity
