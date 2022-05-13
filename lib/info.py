@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(950, 692)
+        MainWindow.resize(950, 759)
         MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("selection-color: rgb(239, 41, 41);")
@@ -82,15 +82,6 @@ class Ui_MainWindow(object):
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(580, 550, 241, 51))
         self.pushButton_5.setObjectName("pushButton_5")
-
-        #self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget) # <====
-        #self.pushButton_6.setGeometry(QtCore.QRect(300, 405, 120, 50)) # <====
-        #self.pushButton_6.setObjectName("pushButton_5") # <====
-        #self.lineEdit_8 = QtWidgets.QLineEdit(self.centralwidget) # <====
-        #self.lineEdit_8.setGeometry(QtCore.QRect(420, 425, 80, 25)) # <====
-        #self.lineEdit_8.setObjectName("lineEdit_8") # <====
-
-
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(420, 110, 411, 241))
         self.scrollArea.setWidgetResizable(True)
@@ -105,6 +96,19 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.scrollArea_2 = QtWidgets.QScrollArea(self.centralwidget)
+        self.scrollArea_2.setGeometry(QtCore.QRect(90, 590, 391, 101))
+        self.scrollArea_2.setWidgetResizable(True)
+        self.scrollArea_2.setObjectName("scrollArea_2")
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 389, 99))
+        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_10 = QtWidgets.QLabel(self.scrollAreaWidgetContents_2)
+        self.label_10.setObjectName("label_10")
+        self.verticalLayout_2.addWidget(self.label_10)
+        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 950, 22))
@@ -134,3 +138,4 @@ class Ui_MainWindow(object):
         self.pushButton_4.setText(_translate("MainWindow", "PushButton"))
         self.pushButton_5.setText(_translate("MainWindow", "PushButton"))
         self.label.setText(_translate("MainWindow", "TextLabel"))
+        self.label_10.setText(_translate("MainWindow", "TextLabel"))

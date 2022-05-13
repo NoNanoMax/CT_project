@@ -16,7 +16,7 @@
 int main() {
     Scene r;
     try{
-        r.initialization("tmp_info.ass");
+        r.initialization("info.ass");
     } catch(const char* err_st){
         fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", err_st);
         return 0;

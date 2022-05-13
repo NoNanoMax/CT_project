@@ -36,6 +36,7 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.pushButton_3.setText("Очистить")
         #self.ui.pushButton_6.setText("Изменить\n объект №") # <======
         self.ui.label_9.setText("Имя файла")
+        self.ui.label_10.setText("")
         self.ui.pushButton_4.setText("Загрузить сцену")
         self.ui.pushButton_5.setText("Сохранить сцену")
 
@@ -79,12 +80,15 @@ class mywindow(QtWidgets.QMainWindow):
         f.close()
 
     def draw(self):
+        self.ui.label_10.setText("")
         f = open("info.ass", "w")
         if self.to_put.find("Camera") == -1:
             f.write("Camera 0 0 4 0 0 0 1.2 1000 1000 1\n")
         f.write(self.to_put)
         f.close()
-        draw_men_with_dumplings_lol()
+        err = draw_men_with_dumplings_lol()
+        if err is not None:
+            self.ui.label_10.setText(err)
         os.remove("info.ass")
 
     def Change(self):
