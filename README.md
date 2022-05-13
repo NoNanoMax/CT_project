@@ -75,6 +75,10 @@
         
         make
         python3 main.py
+        
+Для запуска из exe скачать архив по [ссылке](https://drive.google.com/file/d/1pAork9sgyxTT2kXGFC8yV1vgNYMK80uv/view?usp=sharing)
+
+        tar -xvf prog.tar.gz
        
 ![](https://github.com/NoNanoMax/CT_project/blob/dev/pictures/ex4.jpg)
 
