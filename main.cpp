@@ -22,6 +22,7 @@ int main() {
         return 0;
     } catch(...){
         fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", strerror(errno));
+
         return 0;
     }
     try{

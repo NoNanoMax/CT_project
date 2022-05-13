@@ -7,9 +7,6 @@ BeautifulPlane 0 0 -1 -50 blue mirror
 BeautifulPlane -0.1 0 1 -50 blue mirror
 BeautifulSphere -3 28 -4.5 1 red
 BeautifulSphere 8 35 -20.4 0.8 red
-BeautifulSphere 12 40 -24.5 0.8 red
+BeautifulSphere 12 40
 BeautifulSphere 20 20 -23.7 1 red
 BeautifulSphere 35 10 -20 5 red glass
-# BeautifulSphere 20 20 -23.7 1  mirror
-# BeautifulSphere 5 30 -40 14 red glass
-PolyFigure scene_collection/tree/Lowpoly_tree_sample.obj 1 -1 1 2 white

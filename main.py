@@ -84,7 +84,8 @@ class mywindow(QtWidgets.QMainWindow):
             f.write("Camera 0 0 4 0 0 0 1.2 1000 1000 1\n")
         f.write(self.to_put)
         f.close()
-        draw_men_with_dumplings_lol()
+        a = draw_men_with_dumplings_lol()
+        print(a)
         os.remove("info.ass")
 
     def Change(self):

@@ -6,8 +6,6 @@ from matplotlib import pyplot as plt
 import sys
 from subprocess import Popen, PIPE
 
-from sympy import vring
-
 def useless_func():
     a = np.random.randn(256, 256, 3)
     a = np.abs(a)
@@ -34,8 +32,17 @@ def draw_men_with_dumplings_lol(PATH=None):
         input: (C, H, W) matrix
     '''
     if PATH is None:
-        sub_proc = Popen(["./run"], stdout=PIPE, universal_newlines=True)
-    (out, _) = sub_proc.communicate()
+        sub_proc = Popen(["./run"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    (out, err) = sub_proc.communicate()
+
+    if err is not None:
+        print("azaa")
+        sub_proc.kill()
+        print(err.strip())
+
+    if out is None:
+        return 
+
     out = out.strip().split()
     
     H, W, C = int(out[0]), int(out[1]), int(out[2])

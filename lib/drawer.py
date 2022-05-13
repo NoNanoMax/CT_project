@@ -19,7 +19,9 @@ def draw_men_with_dumplings_lol(PATH=None):
     '''
     if PATH is None:
         sub_proc = Popen(["./run"], stdout=PIPE, universal_newlines=True)
-    (out, _) = sub_proc.communicate()
+    (out, err) = sub_proc.communicate()
+    if len(err) > 0:
+        return err
     out = out.strip().split()
     H, W, C = int(out[0]), int(out[1]), int(out[2])
     picture = np.array(out[3:], dtype=float).reshape((H, W, C)) / 255
