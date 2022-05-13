@@ -6,8 +6,6 @@ from matplotlib import pyplot as plt
 import sys
 from subprocess import Popen, PIPE
 
-from sympy import vring
-
 def useless_func():
     a = np.random.randn(256, 256, 3)
     a = np.abs(a)
