@@ -214,8 +214,8 @@ void Scene::initialization(const char * input) {
         if (it == factory.end()) continue;
         try{
             ptr = (it->second).second->clone(args);
-        } catch(std::string err_st){
-            fprintf(stderr, "ошибка при создании объекта с параметрами \"%s\": \n   %s\n", s.c_str(), err_st.c_str());
+        } catch(const char* err_st){
+            fprintf(stderr, "ошибка при создании объекта с параметрами \"%s\": \n   %s\n", s.c_str(), err_st);
             continue;
         }catch(...){
             fprintf(stderr, "ошибка при создании объекта с параметрами \"%s\": \n %s\n", s.c_str(), strerror(errno));
@@ -314,8 +314,8 @@ void Scene::parallel_trace_ray(Ray * it, int times){
     for( ;times > 0; ++it, --times){
         try{
         trace_ray(*it);
-        } catch(std::string err_str){
-            fprintf(stderr, "проблемы с обработкой пикселя %d %d:\n     %s\n", it->x, it->y, err_str.c_str());
+        } catch(const char* err_str){
+            fprintf(stderr, "проблемы с обработкой пикселя %d %d:\n     %s\n", it->x, it->y, err_str);
         } catch(...){
             fprintf(stderr, "проблемы с обработкой пикселя:\n     %s\n", strerror(errno));
         }
