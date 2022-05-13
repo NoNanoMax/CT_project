@@ -6,37 +6,46 @@
 */
 
 
-#include "render/render.h"
-#include "iostream"
+#include "render/scene.h"
+#include "stdio.h"
+#include <errno.h>
+#include <string.h>
 #include <vector>
+#include <stdexcept>
 
 int main() {
-    // Vec3 o = Vec3(0, 0, 0);
-    // Vec3 x = Vec3(1, 0, 0);
-    // Vec3 y = Vec3(0, 1, 0);
-    // Vec3 z = Vec3(0, 0, 1);
-    // Ambient_light l1 = Ambient_light(0.25);
-    // Point_light l2 = Point_light(o, 1);
-    // Directed_light l3 = Directed_light(x, 0.5);
-    // Lights all;
-    // all.push_back(&l1);
-    // all.push_back(&l2);
-    // all.push_back(&l3);
-    // std::cout << all.full_intensity_in_point(2 * x,  Vec3(-1, 0, 0)) << std::endl;
+    Scene r;
+    try{
+        r.initialization("tmp_info.ass");
+    } catch(const char* err_st){
+        fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", err_st);
+        return 0;
+    } catch(...){
+        fprintf(stderr, "ошибка при чтении сцены:\n     %s\n", strerror(errno));
+        return 0;
+    }
+    try{
+        r.render();
+    } catch(const char* err_st){
+        fprintf(stderr, "ошибка при отрисовке сцены: %s\n", err_st);
+        return 0;
+    } catch(...){
+        fprintf(stderr, "ошибка при отрисовке сцены:\n    %s\n", strerror(errno));
+        return 0;
+    }
+    
+    Color** res = r.get_res();
+    int height =  r.get_camera()->height();
+    int width = r.get_camera()->width();
+    printf("%d %d %d\n", height, width, 3);
 
-    // double ang[3];
-    // ang[0] = 0, ang[1] = 0, ang[2] = 0;
-    // Camera camera(o, ang, 1, 1, 1, 10, 10);
-
-    // std::vector<std::vector<Ray> > v = camera.create_rays();
-    // for (int i = 0; i < v.size(); i++) {
-    //     for (int j = 0; j < v[0].size(); j++) {
-    //         std::cout << v[i][j].dir.z << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-
-
+   	for (int j = height - 1; j >= 0; j--) {
+        for (int i = 0; i < width; i++) {
+            printf("%f %f %f ", 1.0*res[i][j].r, 1.0*res[i][j].g, 1.0*res[i][j].b);
+        }
+        printf("\n");
+   	}
+	printf("\n");
 
     return 0;
 }
