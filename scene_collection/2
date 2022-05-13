@@ -1,7 +1,7 @@
 Camera 30 10 -60 3.1415 1.8 -0.1 1.2 1000 1000 0
 Ambient_light 0.3
 Point_light 0 80 -60 0.4
-Point_light 40 80 -10 0.6
+Point_light 40 80 -10 0.8
 BeautifulPlane 0 -1 0 2.8 green
 BeautifulPlane 0 0 -1 -50 blue mirror
 BeautifulPlane -0.1 0 1 -50 blue mirror
